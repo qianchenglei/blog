@@ -1,9 +1,8 @@
 {
-  // Cloudflare Workers 静态资源配置：把仓库根目录整个作为网站文件上传
-  // 如果 index.html 在仓库的 blog/ 子目录下（而不是根目录），把 directory 改成 "./blog"
-  "name": "zikao-blog",
-  "compatibility_date": "2026-08-28",
+  "name": "blog",
+  "compatibility_date": "2026-08-31",
   "assets": {
-    "directory": "./"
+    "directory": "./",
+    "exclude": [".git/**", ".wrangler/**", ".idea/**", "*.log"]
   }
 }
