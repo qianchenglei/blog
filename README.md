@@ -46,6 +46,8 @@ python -m http.server      # 有 Python
 
 1. **Deploy command 改为** `npx wrangler deploy`
    （Dashboard → Workers & Pages → 你的 Worker → Settings → Builds → Deploy command）
+   ⚠️ 不要用 `npx wrangler versions upload`：它只上传新版本，
+   **不会把流量切到生产**，线上会一直是旧版本。`wrangler deploy` 上传并直接上线。
 2. `wrangler.jsonc` 里 `assets.directory` 指向正确位置：
    index.html 在仓库根目录用 `"./"`；在仓库 `blog/` 子目录下用 `"./blog"`
 
