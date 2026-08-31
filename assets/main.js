@@ -2,7 +2,7 @@
  * 站点配置：想改站名、副标题、简介、页脚，只改这里
  * ===================================================== */
 const SITE = {
-  title: "拾级而上",
+  title: "我命由我不由天",
   subtitle: "自考 × 考研 · 学习笔记",
   description: "记录自考课程笔记、考研备考进度与心得。文章都在 posts/ 目录里，用 Markdown 写成。",
   footer: "© 2026 · 用 Markdown 记录成长",
@@ -31,6 +31,18 @@ function inline(s) {
   s = s.replace(/~~([^~]+)~~/g, "<del>$1</del>");
   s = s.replace(/\u0000(\d+)\u0000/g, (m, i) => codes[+i]);
   return s;
+}
+
+/* 拆出文件头的 frontmatter（--- title: xx --- 块），返回 [元数据, 正文] */
+function splitFrontmatter(text) {
+  const m = text.match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  if (!m) return [{}, text];
+  const fm = {};
+  for (const line of m[1].split(/\r?\n/)) {
+    const kv = line.match(/^([\w\u4e00-\u9fa5]+)\s*:\s*(.*)$/);
+    if (kv) fm[kv[1].trim()] = kv[2].trim();
+  }
+  return [fm, text.slice(m[0].length)];
 }
 
 /* 块级 Markdown -> HTML（支持标题/列表/任务列表/引用/表格/代码块/分割线） */
@@ -257,7 +269,23 @@ async function initPost() {
   try {
     const res = await fetch("posts/" + encodeURIComponent(file));
     if (!res.ok) throw new Error(res.status);
-    content.innerHTML = renderMarkdown(await res.text());
+    const [fm, md] = splitFrontmatter(await res.text());
+    // 文章页缺的信息可以用 frontmatter 里的补上（posts.json 的记录优先）
+    const title = meta.title || fm.title;
+    const date = meta.date || fm.date;
+    if (title) {
+      document.getElementById("post-title").textContent = title;
+      document.title = title + " · " + SITE.title;
+    }
+    if ((meta.tags || []).length || fm.tags) {
+      // posts.json 里 tags 是数组；frontmatter 里是 "[a, b]" 这样的字符串
+      const raw = meta.tags || String(fm.tags).replace(/[\[\]]/g, "");
+      const tags = (Array.isArray(raw) ? raw : raw.split(/[,，]/))
+        .map(s => String(s).trim()).filter(Boolean);
+      metaEl.innerHTML = (date ? `<time>${escapeHtml(date)}</time>` : "") +
+        tags.map(t => `<button class="tag">${escapeHtml(t)}</button>`).join("");
+    }
+    content.innerHTML = renderMarkdown(md);
   } catch (e) {
     content.innerHTML = `<div class="notice">文章「${escapeHtml(file)}」不存在或加载失败。</div>`;
   }

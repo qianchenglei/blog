@@ -40,14 +40,28 @@ python -m http.server      # 有 Python
 
 然后访问终端里显示的地址（如 http://localhost:3000）。
 
-## 部署到 Cloudflare Pages（推荐）
+## 部署到 Cloudflare Workers（当前方案）
 
-1. 把 `blog/` 里的内容推到一个 GitHub 仓库
-2. [Cloudflare Dashborad](https://dash.cloudflare.com) → Workers & Pages → Create → Pages → 连接该 GitHub 仓库
-3. 构建设置：**Build command 留空**，**Build output directory 填 `/`**
-4. 部署完成后得到 `xxx.pages.dev` 域名，绑定自己的域名也在 Pages 项目里设置
+仓库根目录的 `wrangler.jsonc` 已把整站声明为静态资源。Cloudflare 侧需要确认两件事：
 
-以后写完文章 `git push`，Cloudflare 会自动重新部署。
+1. **Deploy command 改为** `npx wrangler deploy`
+   （Dashboard → Workers & Pages → 你的 Worker → Settings → Builds → Deploy command）
+2. `wrangler.jsonc` 里 `assets.directory` 指向正确位置：
+   index.html 在仓库根目录用 `"./"`；在仓库 `blog/` 子目录下用 `"./blog"`
+
+部署成功后得到 `xxx.<worker-name>.workers.dev` 域名；绑定自定义域名在
+Worker → Settings → Domains & Routes 里加。
+
+> 纯静态站用 Workers 托管不收费（静态资源请求免费额度很大）。
+
+## 部署到 Cloudflare Pages（备选）
+
+不想用 Workers 也可以改用 Pages，无需任何配置文件：
+
+1. [Cloudflare Dashboard](https://dash.cloudflare.com) → Workers & Pages → Create → Pages → 连接 GitHub 仓库
+2. **Build command 留空**，**Build output directory 填 `/`**（若 blog 在子目录则填 `/blog`）
+
+两种方式任选其一，都支持 push 后自动重新部署。
 
 ## 部署到 GitHub Pages（备选）
 
