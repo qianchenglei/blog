@@ -1,0 +1,14 @@
+# IDE
+.idea/
+.vscode/
+
+# Cloudflare / wrangler 本地缓存
+.wrangler/
+.dev.vars
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 依赖（本站无依赖，保险起见）
+node_modules/
