@@ -80,6 +80,144 @@ const COURSES = [
       { title: "线性表", points: ["顺序存储 · 泛型数组", "链式存储 · 单链表"], file: "ds--Array.md" },
     ],
   },
+
+  /* ---- 数学（一）：高等数学 / 线性代数 / 概率论（暂无封面图，自动占位） ---- */
+  {
+    id: "math-calculus",
+    code: "数学（一）",
+    title: "高等数学",
+    emoji: "∫",
+    color: "#2563eb",
+    color2: "#173a8a",
+    tags: ["数学"],
+    cover: "",
+    description: "数学（一）· 高等数学：极限、导数、积分与级数，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "math-linalg",
+    code: "数学（一）",
+    title: "线性代数",
+    emoji: "🧮",
+    color: "#0ea5e9",
+    color2: "#0b6b98",
+    tags: ["数学"],
+    cover: "",
+    description: "数学（一）· 线性代数：行列式、矩阵与向量空间，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "math-prob",
+    code: "数学（一）",
+    title: "概率论与数理统计",
+    emoji: "🎲",
+    color: "#0891b2",
+    color2: "#0a5c73",
+    tags: ["数学"],
+    cover: "",
+    description: "数学（一）· 概率论与数理统计：随机变量、分布与统计推断，笔记整理中。",
+    chapters: [],
+  },
+
+  /* ---- 英语（一）：单词 / 阅读 / 长难句 / 作文（暂无封面图，自动占位） ---- */
+  {
+    id: "eng1-vocab",
+    code: "英语（一）",
+    title: "英语（一）· 单词",
+    emoji: "📇",
+    color: "#0d9488",
+    color2: "#0a635b",
+    tags: ["英语（一）"],
+    cover: "",
+    description: "英语（一）词汇：按 List / 主题分组背词，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "eng1-reading",
+    code: "英语（一）",
+    title: "英语（一）· 阅读",
+    emoji: "📖",
+    color: "#14b8a6",
+    color2: "#0f766e",
+    tags: ["英语（一）"],
+    cover: "",
+    description: "英语（一）阅读：真题长文与精读笔记，整理中。",
+    chapters: [],
+  },
+  {
+    id: "eng1-sentences",
+    code: "英语（一）",
+    title: "英语（一）· 长难句",
+    emoji: "🧬",
+    color: "#2dd4bf",
+    color2: "#0f766e",
+    tags: ["英语（一）"],
+    cover: "",
+    description: "英语（一）长难句：从句拆分与翻译练习，整理中。",
+    chapters: [],
+  },
+  {
+    id: "eng1-writing",
+    code: "英语（一）",
+    title: "英语（一）· 作文",
+    emoji: "✍️",
+    color: "#0f766e",
+    color2: "#0a4f4a",
+    tags: ["英语（一）"],
+    cover: "",
+    description: "英语（一）作文：模板与范文背诵，整理中。",
+    chapters: [],
+  },
+
+  /* ---- 计算机 408：数据结构 / 组成原理 / 操作系统 / 计算机网络（有封面图，待放进 assets/covers） ---- */
+  {
+    id: "cs408-ds",
+    code: "408",
+    title: "数据结构（408）",
+    emoji: "🧩",
+    color: "#4f46e5",
+    color2: "#312e9e",
+    tags: ["计算机408"],
+    cover: "",
+    description: "408 · 数据结构：线性表、树与图、查找与排序，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "cs408-co",
+    code: "408",
+    title: "计算机组成原理",
+    emoji: "🖥️",
+    color: "#6d28d9",
+    color2: "#4520a0",
+    tags: ["计算机408"],
+    cover: "",
+    description: "408 · 计算机组成原理：运算器、存储系统与指令流水线，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "cs408-os",
+    code: "408",
+    title: "操作系统",
+    emoji: "🐧",
+    color: "#7c3aed",
+    color2: "#4c1d95",
+    tags: ["计算机408"],
+    cover: "",
+    description: "408 · 操作系统：进程管理、内存、文件与 IO，笔记整理中。",
+    chapters: [],
+  },
+  {
+    id: "cs408-net",
+    code: "408",
+    title: "计算机网络",
+    emoji: "🌐",
+    color: "#9333ea",
+    color2: "#5b21b6",
+    tags: ["计算机408"],
+    cover: "",
+    description: "408 · 计算机网络：分层体系与各层协议，笔记整理中。",
+    chapters: [],
+  },
 ];
 
 /* ---------- 工具 ---------- */
@@ -337,6 +475,41 @@ function bindViewExtras(root) {
       if (k < 1) requestAnimationFrame(tick);
     })(t0);
   });
+
+  bindShelfScroll(root);
+}
+
+/* 书架横向滚动：左右箭头 + 鼠标滚轮 + 溢出时更新状态 */
+function bindShelfScroll(root) {
+  const grid = root.querySelector("#shelf-grid");
+  const wrap = root.querySelector("#shelf-scroll");
+  if (!grid || !wrap) return;
+  const prev = root.querySelector(".shelf-btn.prev");
+  const next = root.querySelector(".shelf-btn.next");
+
+  const update = () => {
+    const over = grid.scrollWidth > grid.clientWidth + 1;
+    wrap.classList.toggle("has-overflow", over);
+    if (prev) prev.disabled = !over || grid.scrollLeft <= 0;
+    if (next) next.disabled = !over ||
+      grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 1;
+  };
+
+  const scrollBy = (dir) => grid.scrollBy({ left: dir * grid.clientWidth * .8, behavior: "smooth" });
+  if (prev) prev.addEventListener("click", () => scrollBy(-1));
+  if (next) next.addEventListener("click", () => scrollBy(1));
+  grid.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+
+  // 鼠标悬停书架上时，滚轮改为横向滚动（书架无溢出时不影响页面滚动）
+  grid.addEventListener("wheel", e => {
+    const over = grid.scrollWidth > grid.clientWidth + 1;
+    if (!over || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    grid.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+
+  update();
 }
 
 /* 点书时从点击处荡开一圈颜色，随后切换到知识结构页 */
@@ -409,9 +582,13 @@ function renderHome(view, posts) {
 
   <section class="section wrap-wide" id="shelf">
     <header class="sec-head reveal">
-      <h2>书架</h2><p>点击书本封面，进入这门课的知识结构</p>
+      <h2>书架</h2><p>左右滑动 / 拖动滚动条翻阅 · 点击书本封面进入该课知识结构</p>
     </header>
-    <div class="shelf-grid">${books}</div>
+    <div class="shelf-scroll" id="shelf-scroll">
+      <button class="shelf-btn prev" type="button" aria-label="向左翻书架">‹</button>
+      <div class="shelf-grid" id="shelf-grid">${books}</div>
+      <button class="shelf-btn next" type="button" aria-label="向右翻书架">›</button>
+    </div>
   </section>
 
   <section class="section wrap-wide" id="latest">

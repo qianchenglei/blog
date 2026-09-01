@@ -4,12 +4,23 @@
 
 ## 命名规则
 
-| 课程 | 文件名（任选一种格式） |
+| 书本 | 文件名（任选一种格式） |
 | --- | --- |
 | 马克思主义基本原理 | `marxism.jpg` |
 | 中国近现代史纲要 | `history.jpg` |
 | 英语（专升本） | `english.jpg` |
-| 数据结构 | `ds.jpg` |
+| 数据结构（自考） | `ds.jpg` |
+| 高等数学（数学一） | `math-calculus.jpg` |
+| 线性代数（数学一） | `math-linalg.jpg` |
+| 概率论与数理统计（数学一） | `math-prob.jpg` |
+| 英语一 · 单词 | `eng1-vocab.jpg` |
+| 英语一 · 阅读 | `eng1-reading.jpg` |
+| 英语一 · 长难句 | `eng1-sentences.jpg` |
+| 英语一 · 作文 | `eng1-writing.jpg` |
+| 数据结构（408） | `cs408-ds.jpg` |
+| 计算机组成原理（408） | `cs408-co.jpg` |
+| 操作系统（408） | `cs408-os.jpg` |
+| 计算机网络（408） | `cs408-net.jpg` |
 
 支持的格式：`.jpg` `.jpeg` `.png` `.webp`，四种格式任选其一即可。
 

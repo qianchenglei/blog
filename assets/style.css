@@ -279,17 +279,65 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
 .more-link:hover { color: var(--accent); }
 
 /* ===== 书架与 3D 书本 ===== */
-.shelf-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 44px 28px;
-  justify-items: center;
-  padding: 12px 0 30px;
+/* 书架是横向滚动条：书多了就水平滚，不把页面撑高 */
+.shelf-scroll {
+  position: relative;
+  margin: 0 -8px;
 }
+.shelf-grid {
+  display: flex;
+  gap: 36px 28px;
+  align-items: stretch;
+  overflow-x: auto;
+  padding: 14px 8px 34px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-soft) transparent;
+}
+.shelf-grid::-webkit-scrollbar { height: 9px; }
+.shelf-grid::-webkit-scrollbar-track { background: transparent; }
+.shelf-grid::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted) 32%, transparent);
+  border-radius: 99px;
+}
+.shelf-grid::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* 左右滚动箭头：书架有溢出时才显示 */
+.shelf-btn {
+  position: absolute;
+  top: 42%;
+  z-index: 6;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-hover);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .18s ease, color .2s;
+}
+.shelf-btn:hover { color: var(--accent); }
+.shelf-btn:active { transform: translateY(-50%) scale(.92); }
+.shelf-btn.prev { left: 2px; transform: translateY(-50%); }
+.shelf-btn.next { right: 2px; transform: translateY(-50%); }
+.shelf-btn.prev:active { transform: translateY(-50%) scale(.92); }
+.shelf-btn.next:active { transform: translateY(-50%) scale(.92); }
+.shelf-btn[disabled] { opacity: 0 !important; pointer-events: none; }
+.shelf-scroll.has-overflow .shelf-btn { opacity: 1; pointer-events: auto; }
 
 .book {
   --rx: 0deg; --ry: 0deg;
   position: relative;
+  flex: 0 0 172px;
+  scroll-snap-align: start;
   width: 172px;
   display: block;
   color: var(--text);
@@ -787,6 +835,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
   .hero-stats { gap: 24px; }
   .section { padding: 52px 0 18px; }
   .shelf-grid { gap: 36px 12px; }
+  .shelf-btn { display: none; }
   .course-head { flex-direction: column; align-items: flex-start; gap: 18px; }
   .post-body { padding: 24px 20px 30px; }
   .ch-meta { display: none; }
