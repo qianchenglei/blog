@@ -8,6 +8,11 @@
 | --- | --- |
 | 马克思主义基本原理 | `marxism.jpg` |
 | 中国近现代史纲要 | `history.jpg` |
+| 习近平新时代中国特色社会主义思想概论 | `xithought.jpg` |
+| 毛泽东思想和中国特色社会主义理论体系概论 | `maozhongte.jpg` |
+| 思想道德与法治 | `ideol-morality.jpg` |
+| 形势与政策 · 时事政治 | `current-affairs.jpg` |
+| **考研政治（六门合并成一本）** | `politics.jpg` |
 | 英语（专升本） | `english.jpg` |
 | 数据结构（自考 13003 / 考研 408 共用） | `ds.jpg` |
 | 高等数学（数学一） | `math-calculus.jpg` |
