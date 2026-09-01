@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>管理后台 · 我命由我不由天</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* ---------- 后台专用样式（变量继承自 assets/style.css） ---------- */
+    .adm-wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 60px; }
+    .adm-hidden { display: none !important; }
+
+    /* 登录卡片 */
+    .adm-login { max-width: 380px; margin: 9vh auto 0; }
+    .adm-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 30px 28px; }
+    .adm-login h1 { margin: 0 0 6px; font-size: 21px; }
+    .adm-login .tip { color: var(--muted); font-size: 13.5px; margin: 0 0 18px; }
+    .adm-login .err { color: #d64545; font-size: 13.5px; margin: 10px 0 0; min-height: 1.2em; }
+
+    /* 表单 */
+    .adm-field { margin-bottom: 14px; }
+    .adm-field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+    .adm-input, .adm-area {
+      width: 100%; box-sizing: border-box; padding: 9px 12px; font-size: 14px; color: var(--text);
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 9px; outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .adm-input:focus, .adm-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .adm-area { resize: vertical; line-height: 1.7; }
+    .adm-area.mono { font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 13.5px; }
+
+    /* 工具条 + 列表 */
+    .adm-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+    .adm-head h1 { margin: 0; font-size: 22px; }
+    .adm-head .stat { color: var(--muted); font-size: 13.5px; }
+    .adm-head .spacer { flex: 1; }
+    .adm-table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow-x: auto; }
+    table.adm-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+    .adm-table th { text-align: left; font-size: 12.5px; color: var(--muted); font-weight: 500; padding: 12px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .adm-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .adm-table tr:last-child td { border-bottom: none; }
+    .adm-table tr:hover td { background: var(--accent-soft); }
+    .adm-table .t-title { font-weight: 600; cursor: pointer; }
+    .adm-table .t-title:hover { color: var(--accent); }
+    .adm-table .t-file { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+    .adm-table .t-ops { white-space: nowrap; }
+    .adm-table .t-ops button { margin-right: 2px; }
+    .adm-table .t-date { white-space: nowrap; color: var(--muted); }
+
+    .adm-link { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 13.5px; padding: 4px 6px; border-radius: 6px; }
+    .adm-link:hover { background: var(--accent-soft); }
+    .adm-link.danger { color: #d64545; }
+
+    /* 编辑器 */
+    .adm-editor { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: start; }
+    @media (max-width: 860px) { .adm-editor { grid-template-columns: 1fr; } }
+    .adm-editor-side { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; }
+    .adm-editor-main { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; }
+    .adm-editor-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .adm-editor-bar .hint { color: var(--muted); font-size: 12.5px; }
+    .adm-content { width: 100%; min-height: 58vh; }
+    .adm-preview-box { min-height: 58vh; }
+    .adm-count { color: var(--muted); font-size: 12px; text-align: right; margin-top: 6px; }
+    .adm-side-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+
+    .btn.sm { padding: 7px 14px; font-size: 13.5px; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    /* Toast */
+    .adm-toast {
+      position: fixed; left: 50%; bottom: 34px; transform: translate(-50%, 20px); z-index: 99;
+      background: var(--text); color: var(--bg); font-size: 13.5px; padding: 10px 18px; border-radius: 10px;
+      box-shadow: var(--shadow-hover); opacity: 0; pointer-events: none; transition: all .25s ease; max-width: 86vw;
+    }
+    .adm-toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .adm-toast.err { background: #b3382f; color: #fff; }
+  </style>
+</head>
+<body data-page="admin">
+  <nav class="topnav" id="topnav">
+    <div class="wrap-wide nav-in">
+      <a class="brand" href="index.html"><span class="brand-mark">📚</span><span id="site-title">…</span></a>
+      <div class="nav-right">
+        <a class="nav-link" href="index.html" target="_blank">打开站点 ↗</a>
+        <button id="theme-toggle" class="theme-toggle" title="切换深浅色" aria-label="切换深浅色">🌓</button>
+        <button id="logout-btn" class="nav-link adm-hidden" style="border:none;background:none;cursor:pointer">退出登录</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- 登录 -->
+    <div id="login-view" class="adm-wrap adm-hidden">
+      <div class="adm-login">
+        <div class="adm-card">
+          <h1>🔐 管理后台</h1>
+          <p class="tip">登录后可以新建、修改、删除文章，保存即自动部署。</p>
+          <form id="login-form">
+            <div class="adm-field">
+              <label for="login-user">用户名</label>
+              <input class="adm-input" id="login-user" autocomplete="username" required>
+            </div>
+            <div class="adm-field">
+              <label for="login-pass">密码</label>
+              <input class="adm-input" id="login-pass" type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-primary" id="login-btn" type="submit" style="width:100%">登 录</button>
+          </form>
+          <p class="err" id="login-err"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 应用 -->
+    <div id="app-view" class="adm-wrap adm-hidden">
+      <!-- 列表 -->
+      <div id="list-view">
+        <div class="adm-head">
+          <h1>📝 文章管理</h1>
+          <span class="stat" id="list-stat"></span>
+          <span class="spacer"></span>
+          <button class="btn btn-ghost sm" id="refresh-btn" type="button">↻ 刷新</button>
+          <button class="btn btn-primary sm" id="new-btn" type="button">＋ 新建文章</button>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>日期</th><th>标题 / 标签</th><th>文件</th><th style="width:150px">操作</th></tr></thead>
+            <tbody id="post-rows"></tbody>
+          </table>
+        </div>
+        <p class="hint" id="repo-info" style="color:var(--muted);font-size:12.5px;margin-top:10px"></p>
+      </div>
+
+      <!-- 编辑器 -->
+      <div id="editor-view" class="adm-hidden">
+        <div class="adm-head">
+          <button class="adm-link" id="back-btn" type="button">← 返回列表</button>
+          <span class="stat" id="editor-stat"></span>
+        </div>
+        <div class="adm-editor">
+          <aside class="adm-editor-side">
+            <div class="adm-field">
+              <label for="f-title">标题 *</label>
+              <input class="adm-input" id="f-title" placeholder="文章标题">
+            </div>
+            <div class="adm-field">
+              <label for="f-file">文件名（posts/ 下的 .md 文件，新建后不建议再改）</label>
+              <input class="adm-input mono" id="f-file" placeholder="my-note.md">
+            </div>
+            <div class="adm-field">
+              <label for="f-date">日期</label>
+              <input class="adm-input" id="f-date" type="date">
+            </div>
+            <div class="adm-field">
+              <label for="f-tags">标签（逗号分隔）</label>
+              <input class="adm-input" id="f-tags" list="tag-list" placeholder="自考, 数据结构（ds）">
+              <datalist id="tag-list"></datalist>
+            </div>
+            <div class="adm-field">
+              <label for="f-summary">摘要（列表页展示）</label>
+              <textarea class="adm-area" id="f-summary" rows="3" placeholder="一句话介绍这篇文章"></textarea>
+            </div>
+            <div class="adm-side-actions">
+              <button class="btn btn-primary" id="save-btn" type="button">💾 保存并发布</button>
+              <button class="btn btn-ghost" id="preview-btn" type="button">👁 预览</button>
+            </div>
+            <p style="color:var(--muted);font-size:12px;margin:14px 0 0;line-height:1.6">
+              保存会向 GitHub 推送一个提交，Cloudflare Pages 自动部署，约 1 分钟后线上生效。<br>编辑器里可用 <b>Ctrl+S</b> 快速保存。
+            </p>
+          </aside>
+          <div class="adm-editor-main">
+            <div id="editor-pane">
+              <textarea class="adm-area mono adm-content" id="f-content"
+                placeholder="在这里写 Markdown……&#10;&#10;## 二级标题会作为章节锚点&#10;- 列表项&#10;**粗体** *斜体* `代码`"></textarea>
+              <div class="adm-count" id="char-count">0 字</div>
+            </div>
+            <div id="preview-pane" class="adm-hidden">
+              <div class="post-body adm-preview-box" id="preview-box"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap-wide" id="footer-text">© 2026 · 用 Markdown 记录成长</div>
+  </footer>
+
+  <div class="adm-toast" id="toast"></div>
+
+  <script src="assets/main.js"></script>
+  <script>
+    /* ================= 后台逻辑 ================= */
+    const $ = s => document.querySelector(s);
+    const state = { posts: [], editing: null, dirty: false };
+
+    /* ---------- 基础 ---------- */
+    function toast(msg, isErr = false) {
+      const t = $("#toast");
+      t.textContent = msg;
+      t.classList.toggle("err", isErr);
+      t.classList.add("show");
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove("show"), isErr ? 5000 : 3200);
+    }
+
+    async function api(path, opts = {}) {
+      const res = await fetch("/api/" + path, {
+        credentials: "same-origin",
+        ...opts,
+        ...(opts.body ? { headers: { "content-type": "application/json" } } : {}),
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (res.status === 401) { showLogin(); throw new Error(data.error || "未登录"); }
+      if (!res.ok) throw new Error(data.error || `请求失败（${res.status}）`);
+      return data;
+    }
+
+    const today = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    };
+    const todayCompact = () => today().replace(/-/g, "");
+
+    /* ---------- 视图切换 ---------- */
+    function showLogin(message = "") {
+      $("#app-view").classList.add("adm-hidden");
+      $("#login-view").classList.remove("adm-hidden");
+      $("#logout-btn").classList.add("adm-hidden");
+      $("#login-err").textContent = message;
+      const u = localStorage.getItem("adm-user");
+      if (u) $("#login-user").value = u;
+    }
+    function showApp() {
+      $("#login-view").classList.add("adm-hidden");
+      $("#app-view").classList.remove("adm-hidden");
+      $("#logout-btn").classList.remove("adm-hidden");
+    }
+
+    /* ---------- 列表 ---------- */
+    async function loadPosts() {
+      const data = await api("posts");
+      state.posts = (data.list || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      $("#repo-info").textContent = `数据来源：GitHub ${data.repo} @ ${data.branch} · 保存即推送提交`;
+      renderList();
+    }
+
+    function renderList() {
+      const rows = $("#post-rows");
+      const n = state.posts.length;
+      $("#list-stat").textContent = n
+        ? `共 ${n} 篇 · 最近：《${state.posts[0].title}》（${state.posts[0].date}）`
+        : "还没有文章";
+      rows.innerHTML = "";
+      for (const p of state.posts) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="t-date">${escapeHtml(p.date || "")}</td>
+          <td>
+            <div class="t-title">${escapeHtml(p.title || "(无标题)")}</div>
+            <div style="margin-top:4px">${(p.tags || []).map(t => `<span class="tag" style="font-size:11.5px">${escapeHtml(t)}</span>`).join(" ")}</div>
+          </td>
+          <td class="t-file">${escapeHtml(p.file)}</td>
+          <td class="t-ops">
+            <button class="adm-link act-edit">✏️ 编辑</button>
+            <a class="adm-link" href="post.html#p=${encodeURIComponent(p.file)}" target="_blank">↗ 查看</a>
+            <button class="adm-link danger act-del">🗑 删除</button>
+          </td>`;
+        tr.querySelector(".t-title").addEventListener("click", () => openEditor(p.file));
+        tr.querySelector(".act-edit").addEventListener("click", () => openEditor(p.file));
+        tr.querySelector(".act-del").addEventListener("click", () => removePost(p));
+        rows.appendChild(tr);
+      }
+      const tags = [...new Set(state.posts.flatMap(p => p.tags || []))];
+      $("#tag-list").innerHTML = tags.map(t => `<option value="${escapeHtml(t)}">`).join("");
+    }
+
+    /* ---------- 编辑器 ---------- */
+    const draftKey = () => state.editing ? state.editing.origFile : "__new__";
+    function saveDraft() {
+      if (!editorVisible()) return;
+      localStorage.setItem("adm-draft", JSON.stringify({ key: draftKey(), data: collect(), at: Date.now() }));
+    }
+    function clearDraft() { localStorage.removeItem("adm-draft"); }
+    function loadDraft() {
+      try {
+        const d = JSON.parse(localStorage.getItem("adm-draft") || "null");
+        return d && d.key === draftKey() ? d : null;
+      } catch { return null; }
+    }
+
+    const editorVisible = () => !$("#editor-view").classList.contains("adm-hidden");
+
+    function fillForm(meta, content) {
+      $("#f-title").value = meta.title || "";
+      $("#f-file").value = meta.file || "";
+      $("#f-date").value = meta.date || today();
+      $("#f-tags").value = (meta.tags || []).join("，");
+      $("#f-summary").value = meta.summary || "";
+      $("#f-content").value = content || "";
+      updateCount();
+    }
+
+    async function openEditor(file) {
+      let meta = { date: today() }, content = "";
+      if (file) {
+        meta = state.posts.find(p => p.file === file) || {};
+        try {
+          const data = await api("post?file=" + encodeURIComponent(file));
+          content = data.content;
+        } catch (e) { toast(e.message, true); return; }
+      }
+      state.editing = file ? { origFile: file } : null;
+      state.dirty = false;
+      fillForm(meta, content);
+      $("#editor-stat").textContent = file ? `正在编辑：${meta.title || file}` : "新建文章";
+      switchPane("edit");
+      $("#list-view").classList.add("adm-hidden");
+      $("#editor-view").classList.remove("adm-hidden");
+
+      const draft = loadDraft();
+      if (draft && draft.data && (draft.data.content || draft.data.title)) {
+        fillForm(draft.data, draft.data.content);
+        state.dirty = true;
+        $("#editor-stat").textContent += "（已恢复未保存的草稿）";
+      }
+      window.scrollTo({ top: 0 });
+      (file ? $("#f-content") : $("#f-title")).focus();
+    }
+
+    function backToList(askIfDirty = true) {
+      if (askIfDirty && state.dirty && !confirm("有未保存的修改，确定放弃并返回列表？")) return;
+      clearDraft();
+      state.dirty = false;
+      $("#editor-view").classList.add("adm-hidden");
+      $("#list-view").classList.remove("adm-hidden");
+    }
+
+    function collect() {
+      return {
+        file: $("#f-file").value.trim(),
+        title: $("#f-title").value.trim(),
+        date: $("#f-date").value || today(),
+        tags: $("#f-tags").value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
+        summary: $("#f-summary").value.trim(),
+        content: $("#f-content").value,
+        origFile: state.editing ? state.editing.origFile : "",
+        isNew: !state.editing,
+      };
+    }
+
+    function suggestFile(title) {
+      const slug = title.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, "-").replace(/^-+|-+$/g, "");
+      return (slug && !/^[\u4e00-\u9fa5]/.test(slug) ? slug : "note-" + todayCompact()) + ".md";
+    }
+
+    async function savePost() {
+      const b = collect();
+      if (!b.title) { toast("请先填写标题", true); $("#f-title").focus(); return; }
+      if (!b.file) { b.file = $("#f-file").value = suggestFile(b.title); }
+      if (!b.file.endsWith(".md")) b.file += ".md";
+
+      const btn = $("#save-btn");
+      btn.disabled = true; btn.textContent = "保存中…";
+      try {
+        const data = await api("save", { method: "POST", body: JSON.stringify(b) });
+        state.posts = (data.list || []).slice().sort((a, x) => String(x.date).localeCompare(String(a.date)));
+        state.dirty = false;
+        clearDraft();
+        renderList();
+        backToList(false);
+        toast(`✅ 已保存并推送（${String(data.commit).slice(0, 7)}），约 1 分钟后线上生效`);
+      } catch (e) {
+        toast(e.message, true);
+      } finally {
+        btn.disabled = false; btn.textContent = "💾 保存并发布";
+      }
+    }
+
+    async function removePost(p) {
+      if (!confirm(`确定删除《${p.title}》？\n\n将向仓库推送一个删除提交（删除 ${p.file} 并更新 posts.json），Pages 会自动重新部署。`)) return;
+      try {
+        const data = await api("delete", { method: "POST", body: JSON.stringify({ file: p.file }) });
+        state.posts = (data.list || []).slice().sort((a, x) => String(x.date).localeCompare(String(a.date)));
+        renderList();
+        toast(`🗑 已删除《${p.title}》并推送，约 1 分钟后线上生效`);
+      } catch (e) { toast(e.message, true); }
+    }
+
+    /* ---------- 预览 ---------- */
+    function switchPane(which) {
+      const edit = which === "edit";
+      $("#editor-pane").classList.toggle("adm-hidden", !edit);
+      $("#preview-pane").classList.toggle("adm-hidden", edit);
+      $("#preview-btn").textContent = edit ? "👁 预览" : "✏️ 继续编辑";
+      if (!edit) $("#preview-box").innerHTML = renderMarkdown($("#f-content").value);
+    }
+
+    function updateCount() {
+      $("#char-count").textContent = `${$("#f-content").value.length} 字`;
+    }
+
+    /* ---------- 事件绑定 ---------- */
+    $("#login-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const btn = $("#login-btn");
+      btn.disabled = true; btn.textContent = "登录中…"; $("#login-err").textContent = "";
+      try {
+        await api("login", {
+          method: "POST",
+          body: JSON.stringify({ user: $("#login-user").value.trim(), pass: $("#login-pass").value }),
+        });
+        localStorage.setItem("adm-user", $("#login-user").value.trim());
+        $("#login-pass").value = "";
+        await enterApp();
+      } catch (err) {
+        $("#login-err").textContent = err.message;
+      } finally {
+        btn.disabled = false; btn.textContent = "登 录";
+      }
+    });
+
+    $("#logout-btn").addEventListener("click", async () => {
+      try { await api("logout", { method: "POST" }); } catch {}
+      showLogin("已退出登录");
+    });
+
+    $("#refresh-btn").addEventListener("click", () => loadPosts().catch(e => toast(e.message, true)));
+    $("#new-btn").addEventListener("click", () => openEditor(null));
+    $("#back-btn").addEventListener("click", () => backToList());
+    $("#save-btn").addEventListener("click", savePost);
+    $("#preview-btn").addEventListener("click", () => switchPane(editorPaneHidden() ? "edit" : "preview"));
+    function editorPaneHidden() { return $("#editor-pane").classList.contains("adm-hidden"); }
+
+    $("#f-content").addEventListener("input", () => { state.dirty = true; updateCount(); saveDraft(); });
+    ["#f-title", "#f-file", "#f-date", "#f-tags", "#f-summary"].forEach(sel =>
+      $(sel).addEventListener("input", () => { state.dirty = true; saveDraft(); }));
+
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && editorVisible()) {
+        e.preventDefault();
+        savePost();
+      }
+      if (e.key === "Escape" && editorVisible()) backToList();
+    });
+
+    window.addEventListener("beforeunload", e => {
+      if (editorVisible() && state.dirty) { e.preventDefault(); e.returnValue = ""; }
+    });
+
+    /* ---------- 启动 ---------- */
+    async function enterApp() {
+      showApp();
+      try { await loadPosts(); }
+      catch (e) { toast(e.message, true); }
+    }
+
+    applySiteConfig();
+    initTheme();
+    (async () => {
+      try { await api("me"); await enterApp(); }
+      catch { /* showLogin 已在 api() 里处理 */ }
+    })();
+  </script>
+</body>
+</html>
