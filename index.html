@@ -3,31 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="自考 × 考研学习笔记">
+  <meta name="description" content="自考 × 考研学习笔记：在书架上点开一本教材，进入它的知识结构。">
   <title>我命由我不由天</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="index">
-  <header class="site-header">
-    <div class="wrap">
-      <a class="site-title" href="index.html" id="site-title">我命由我不由天</a>
-      <p class="site-subtitle" id="site-subtitle">自考 × 考研 · 学习笔记</p>
-      <button id="theme-toggle" class="theme-toggle" title="切换深浅色" aria-label="切换深浅色">🌓</button>
+  <nav class="topnav" id="topnav">
+    <div class="wrap-wide nav-in">
+      <a class="brand" href="#/"><span class="brand-mark">📚</span><span id="site-title">…</span></a>
+      <div class="nav-right">
+        <a class="nav-link" data-nav="home" href="#/">主页</a>
+        <a class="nav-link" data-nav="shelf" href="#/shelf">书架</a>
+        <a class="nav-link" data-nav="posts" href="#/posts">全部文章</a>
+        <button id="theme-toggle" class="theme-toggle" title="切换深浅色" aria-label="切换深浅色">🌓</button>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <main class="wrap">
-    <section class="hero">
-      <p id="hero-text">记录自考课程笔记、考研备考进度与心得。文章都在 <code>posts/</code> 目录里，用 Markdown 写成。</p>
-    </section>
-
-    <nav class="tagbar" id="tagbar" aria-label="标签筛选"></nav>
-    <section id="post-list" class="post-list"></section>
-  </main>
+  <main id="view" aria-live="polite"></main>
 
   <footer class="site-footer">
-    <div class="wrap" id="footer-text">© 2026 · 用 Markdown 记录成长</div>
+    <div class="wrap-wide" id="footer-text">© 2026 · 用 Markdown 记录成长</div>
   </footer>
 
   <script src="assets/main.js"></script>
