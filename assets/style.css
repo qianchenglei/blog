@@ -408,6 +408,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
 }
 .ph-title.long { font-size: 14px; letter-spacing: .1em; }
 .course-cover .ph-title.long { font-size: 11px; }
+.book-cover.has-img {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .book-cover.has-img .cover-ph { display: none; }
 
 /* 真实封面：压暗 + 底部书名 */

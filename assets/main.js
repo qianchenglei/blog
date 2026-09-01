@@ -68,14 +68,14 @@ const COURSES = [
   },
   {
     id: "ds",
-    code: "",
+    code: "13003",
     title: "数据结构",
     emoji: "🧩",
     color: "#4f46e5",
     color2: "#312e9e",
-    tags: ["数据结构（ds）"],
+    tags: ["数据结构（ds）", "计算机408"],
     cover: "",
-    description: "以手写实现为主的代码笔记，边学边写。",
+    description: "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
     chapters: [
       { title: "线性表", points: ["顺序存储 · 泛型数组", "链式存储 · 单链表"], file: "ds--Array.md" },
     ],
@@ -169,19 +169,7 @@ const COURSES = [
     chapters: [],
   },
 
-  /* ---- 计算机 408：数据结构 / 组成原理 / 操作系统 / 计算机网络（有封面图，待放进 assets/covers） ---- */
-  {
-    id: "cs408-ds",
-    code: "408",
-    title: "数据结构（408）",
-    emoji: "🧩",
-    color: "#4f46e5",
-    color2: "#312e9e",
-    tags: ["计算机408"],
-    cover: "",
-    description: "408 · 数据结构：线性表、树与图、查找与排序，笔记整理中。",
-    chapters: [],
-  },
+  /* ---- 计算机 408：组成原理 / 操作系统 / 计算机网络（数据结构已与上方"数据结构"合并，有封面图待放进 assets/covers） ---- */
   {
     id: "cs408-co",
     code: "408",

@@ -9,7 +9,7 @@
 | 马克思主义基本原理 | `marxism.jpg` |
 | 中国近现代史纲要 | `history.jpg` |
 | 英语（专升本） | `english.jpg` |
-| 数据结构（自考） | `ds.jpg` |
+| 数据结构（自考 13003 / 考研 408 共用） | `ds.jpg` |
 | 高等数学（数学一） | `math-calculus.jpg` |
 | 线性代数（数学一） | `math-linalg.jpg` |
 | 概率论与数理统计（数学一） | `math-prob.jpg` |
@@ -17,7 +17,6 @@
 | 英语一 · 阅读 | `eng1-reading.jpg` |
 | 英语一 · 长难句 | `eng1-sentences.jpg` |
 | 英语一 · 作文 | `eng1-writing.jpg` |
-| 数据结构（408） | `cs408-ds.jpg` |
 | 计算机组成原理（408） | `cs408-co.jpg` |
 | 操作系统（408） | `cs408-os.jpg` |
 | 计算机网络（408） | `cs408-net.jpg` |
