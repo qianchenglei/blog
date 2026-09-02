@@ -178,6 +178,7 @@ function buildEntry(b) {
   const summary = String(b.summary || "").trim().slice(0, 300);
   const content = String(b.content || "").replace(/\r\n/g, "\n");
   if (content.length > 200000) bad("正文太长（超过 20 万字符）");
+  if (!content.trim()) bad("正文不能为空");
   return { file, title, date, tags, summary, content };
 }
 

@@ -238,13 +238,27 @@ function splitFrontmatter(text) {
   return [fm, text.slice(m[0].length)];
 }
 
+/* 代码块语言标注：把 ```c / ```cpp 之类转成页面上清楚的说明 */
+const CODE_LANG = {
+  c: "C 语言", cpp: "C++", "c++": "C++", cc: "C++", cxx: "C++", h: "C 头文件",
+  json: "JSON", js: "JavaScript", ts: "TypeScript", py: "Python", java: "Java",
+  go: "Go", rs: "Rust", sh: "Shell", bash: "Shell", zsh: "Shell", shell: "Shell",
+  md: "Markdown", markdown: "Markdown", yaml: "YAML", yml: "YAML", xml: "XML",
+  html: "HTML", css: "CSS", sql: "SQL", txt: "文本", text: "文本", plaintext: "文本",
+};
+function codeLangLabel(raw) {
+  const k = (raw || "").trim().toLowerCase();
+  if (!k) return "代码";
+  return CODE_LANG[k] || raw.trim();
+}
+
 /* 块级 Markdown -> HTML（标题/列表/任务列表/引用/表格/代码块/分割线；
    每个二级标题会自动带上 id="sec-N"，供知识树的章节锚点跳转） */
 function renderMarkdown(md) {
   const codeBlocks = [];
   md = md.replace(/```([^\n`]*)\n?([\s\S]*?)```/g, (m, lang, code) => {
     codeBlocks.push(
-      `<div class="codeblock"><div class="code-lang">${escapeHtml(lang.trim() || "text")}</div>` +
+      `<div class="codeblock"><div class="code-lang">${escapeHtml(codeLangLabel(lang))}</div>` +
       `<pre><code>${escapeHtml(code.replace(/\n$/, ""))}</code></pre></div>`);
     return `\u0000CB${codeBlocks.length - 1}\u0000`;
   });

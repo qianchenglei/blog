@@ -29,7 +29,7 @@
     }
     .adm-input:focus, .adm-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
     .adm-area { resize: vertical; line-height: 1.7; }
-    .adm-area.mono { font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 13.5px; }
+    .adm-area.mono { font-family: "JetBrains Mono", ui-monospace, Consolas, "Courier New", monospace; font-size: 13.5px; }
 
     /* 工具条 + 列表 */
     .adm-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -44,7 +44,7 @@
     .adm-table tr:hover td { background: var(--accent-soft); }
     .adm-table .t-title { font-weight: 600; cursor: pointer; }
     .adm-table .t-title:hover { color: var(--accent); }
-    .adm-table .t-file { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+    .adm-table .t-file { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
     .adm-table .t-ops { white-space: nowrap; }
     .adm-table .t-ops button { margin-right: 2px; }
     .adm-table .t-date { white-space: nowrap; color: var(--muted); }
@@ -58,8 +58,6 @@
     @media (max-width: 860px) { .adm-editor { grid-template-columns: 1fr; } }
     .adm-editor-side { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; }
     .adm-editor-main { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; }
-    .adm-editor-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
-    .adm-editor-bar .hint { color: var(--muted); font-size: 12.5px; }
     .adm-content { width: 100%; min-height: 58vh; }
     .adm-preview-box { min-height: 58vh; }
     .adm-count { color: var(--muted); font-size: 12px; text-align: right; margin-top: 6px; }
@@ -172,7 +170,7 @@
           </aside>
           <div class="adm-editor-main">
             <div id="editor-pane">
-              <textarea class="adm-area mono adm-content" id="f-content"
+              <textarea class="adm-area mono adm-content" id="f-content" aria-label="文章正文（Markdown）"
                 placeholder="在这里写 Markdown……&#10;&#10;## 二级标题会作为章节锚点&#10;- 列表项&#10;**粗体** *斜体* `代码`"></textarea>
               <div class="adm-count" id="char-count">0 字</div>
             </div>
@@ -361,6 +359,7 @@
     async function savePost() {
       const b = collect();
       if (!b.title) { toast("请先填写标题", true); $("#f-title").focus(); return; }
+      if (!b.content.trim()) { toast("请先填写正文内容", true); $("#f-content").focus(); return; }
       if (!b.file) { b.file = $("#f-file").value = suggestFile(b.title); }
       if (!b.file.endsWith(".md")) b.file += ".md";
 
@@ -397,7 +396,11 @@
       $("#editor-pane").classList.toggle("adm-hidden", !edit);
       $("#preview-pane").classList.toggle("adm-hidden", edit);
       $("#preview-btn").textContent = edit ? "👁 预览" : "✏️ 继续编辑";
-      if (!edit) $("#preview-box").innerHTML = renderMarkdown($("#f-content").value);
+      if (!edit) {
+        // 预览时去掉文件头 frontmatter（--- ... ---），否则会被当成正文渲染出来
+        const [, bodyMd] = splitFrontmatter($("#f-content").value);
+        $("#preview-box").innerHTML = renderMarkdown(bodyMd);
+      }
     }
 
     function updateCount() {
