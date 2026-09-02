@@ -70,7 +70,13 @@ const COURSES = [
     cover: "",
     description: "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
     chapters: [
-      { title: "线性表", points: ["顺序存储 · 泛型数组", "链式存储 · 单链表"], file: "ds--Array.md" },
+      { title: "线性表 · 泛型数组（C 版起步）", points: ["一维/二维/三维逻辑抽象", "顺序存储 · 栈式插入"], file: "ds--Array.md" },
+      { title: "顺序表（CCC）", points: ["磁盘持久化多表系统", "按位插入删除 · 子菜单查询"], file: "ds-ccc-seqlist.md" },
+      { title: "单链表（danlianbiao）", points: ["带头结点单链表", "头/尾/按位插入与查找"], file: "ds-danlianbiao.md" },
+      { title: "链表·学生管理（lianbiao）", points: ["四种链表形态", "控制台视图层 · 分页打印"], file: "ds-lianbiao-students.md" },
+      { title: "栈与队列（StackAndHeap）", points: ["顺序栈 · 链式栈", "循环队列 · 带头结点链式队列"], file: "ds-stack-queue.md" },
+      { title: "多维数组（C 版 StringMatch）", points: ["多维下标→一维偏移映射", "左移删除 · 释放内存"], file: "ds-stringmatch-array.md" },
+      { title: "多维数组（C++ OOP 版）", points: ["封装 · 继承 · 多态", "模板泛化 Array1D"], file: "Ds _mdArraytoCpp.md" },
     ],
   },
 
