@@ -317,7 +317,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
 }
 .sec-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 .sec-head.with-more { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-.more-link { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.more-link { color: var(--muted); font-size: 14px; white-space: nowrap; display: inline-block; padding: 8px 6px 8px 10px; margin: -8px -6px -8px 0; }
 .more-link:hover { color: var(--accent); }
 
 /* ===== 书架与 3D 书本 ===== */
@@ -674,6 +674,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
 }
 
 .tagbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.tagbar .tag { padding: 6px 15px; }
 
 .tag {
   border: 1px solid var(--border);
@@ -728,7 +729,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
   font-size: 13px;
 }
 .post-meta .dot { opacity: .6; }
-.post-meta .tag { padding: 1px 10px; font-size: 12px; cursor: pointer; }
+.post-meta .tag { padding: 3px 11px; font-size: 12px; cursor: pointer; }
 
 .post-title { margin: 8px 0 6px; font-size: 20px; line-height: 1.4; }
 .post-title a { color: var(--text); }
