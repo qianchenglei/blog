@@ -692,6 +692,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
 .post-list { display: grid; gap: 16px; padding-bottom: 48px; }
 
 .post-card {
+  position: relative;          /* 作为下面“拉伸链接”的定位基准 */
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -703,6 +704,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
   transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
   border-color: var(--accent);
+}
+/* 整卡可点：把标题链接的可点区域拉伸覆盖到整张卡片 */
+.post-card .post-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+/* 卡内其它可交互元素要浮到拉伸链接之上，保持可点 */
+.post-card .tag,
+.post-card button {
+  position: relative;
+  z-index: 2;
 }
 
 .post-meta {
