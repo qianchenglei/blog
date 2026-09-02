@@ -32,14 +32,14 @@ const COURSES = [
     cover: "",
     description: "整套政治教材就这一本：马克思主义基本原理、中国近现代史纲要、毛泽东思想和中国特色社会主义理论体系概论、习近平新时代中国特色社会主义思想概论、思想道德与法治、形势与政策。",
     chapters: [
-      { title: "导论 · 马克思主义是什么", points: ["六个“是”与三大组成部分", "立场 · 观点 · 方法", "1848《共产党宣言》与思想渊源", "科学性 · 人民性 · 实践性 · 发展性"], file: "marxism-principles.md", sec: 1 },
-      { title: "辩证唯物论 · 世界统一于物质", points: ["哲学基本问题的两个侧面", "物质 · 运动 · 静止 · 时空", "意识的起源与能动作用", "人工智能与人类意识"], file: "marxism-principles.md", sec: 2 },
-      { title: "唯物辩证法 · 联系和发展", points: ["普遍联系与变化发展", "对立统一规律（矛盾）", "量变质变规律", "否定之否定规律", "五对基本范畴"], file: "marxism-principles.md", sec: 3 },
-      { title: "认识论 · 实践、真理与价值", points: ["实践的三特征与基本结构", "实践对认识的决定作用", "两次飞跃与认识规律", "真理与价值的统一"], file: "marxism-principles.md", sec: 4 },
-      { title: "唯物史观 · 社会历史的规律", points: ["社会存在与社会意识", "两对社会基本矛盾", "五大动力", "人民群众与个人"], file: "marxism-principles.md", sec: 5 },
-      { title: "政治经济学 · 商品与剩余价值", points: ["商品二因素与劳动二重性", "价值规律与货币五职能", "劳动力成为商品", "剩余价值的生产与资本积累", "资本循环、周转与社会再生产"], file: "marxism-principles.md", sec: 6 },
-      { title: "资本主义的发展及其趋势", points: ["上层建筑：国家、民主与意识形态", "从自由竞争到垄断", "金融资本与垄断价格", "经济全球化", "二战后新变化与当代特征"], file: "marxism-principles.md", sec: 7 },
-      { title: "结语 · 关于科学社会主义", points: ["为什么导图只立了一个标题", "资本积累的历史趋势"], file: "marxism-principles.md", sec: 8 },
+      { title: "导论 · 马克思主义是什么", points: ["六个“是”与三大组成部分", "立场 · 观点 · 方法", "1848《共产党宣言》与思想渊源", "科学性 · 人民性 · 实践性 · 发展性"], file: "politics/marxism-principles.md", sec: 1 },
+      { title: "辩证唯物论 · 世界统一于物质", points: ["哲学基本问题的两个侧面", "物质 · 运动 · 静止 · 时空", "意识的起源与能动作用", "人工智能与人类意识"], file: "politics/marxism-principles.md", sec: 2 },
+      { title: "唯物辩证法 · 联系和发展", points: ["普遍联系与变化发展", "对立统一规律（矛盾）", "量变质变规律", "否定之否定规律", "五对基本范畴"], file: "politics/marxism-principles.md", sec: 3 },
+      { title: "认识论 · 实践、真理与价值", points: ["实践的三特征与基本结构", "实践对认识的决定作用", "两次飞跃与认识规律", "真理与价值的统一"], file: "politics/marxism-principles.md", sec: 4 },
+      { title: "唯物史观 · 社会历史的规律", points: ["社会存在与社会意识", "两对社会基本矛盾", "五大动力", "人民群众与个人"], file: "politics/marxism-principles.md", sec: 5 },
+      { title: "政治经济学 · 商品与剩余价值", points: ["商品二因素与劳动二重性", "价值规律与货币五职能", "劳动力成为商品", "剩余价值的生产与资本积累", "资本循环、周转与社会再生产"], file: "politics/marxism-principles.md", sec: 6 },
+      { title: "资本主义的发展及其趋势", points: ["上层建筑：国家、民主与意识形态", "从自由竞争到垄断", "金融资本与垄断价格", "经济全球化", "二战后新变化与当代特征"], file: "politics/marxism-principles.md", sec: 7 },
+      { title: "结语 · 关于科学社会主义", points: ["为什么导图只立了一个标题", "资本积累的历史趋势"], file: "politics/marxism-principles.md", sec: 8 },
       { title: "中国近现代史纲要", points: ["历史脉络 · 大事年表"], },
       { title: "毛泽东思想和中国特色社会主义理论体系概论", points: ["新民主主义革命理论", "社会主义改造理论", "中国特色社会主义理论体系"], },
       { title: "习近平新时代中国特色社会主义思想概论", points: ["新时代坚持和发展中国特色社会主义"], },
@@ -71,16 +71,16 @@ const COURSES = [
     description: "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
     chapters: [
       { title: "线性表", points: ["顺序表：顺序存储 · 按位插入/删除", "单链表：带头结点 · 头尾/按位插入", "双链表：单/双/循环单/循环双四种形态"], files: [
-        { file: "ds-ccc-seqlist.md", label: "顺序表（CCC）" },
-        { file: "ds-danlianbiao.md", label: "单链表（danlianbiao）" },
-        { file: "ds-lianbiao-students.md", label: "双链表 · 四种形态（lianbiao）" },
+        { file: "ds/ds-ccc-seqlist.md", label: "顺序表（CCC）" },
+        { file: "ds/ds-danlianbiao.md", label: "单链表（danlianbiao）" },
+        { file: "ds/ds-lianbiao-students.md", label: "双链表 · 四种形态（lianbiao）" },
       ] },
-      { title: "栈", points: ["顺序栈（定长数组）", "链式栈（单链表头插 · 无容量上限）"], file: "ds-stack.md" },
-      { title: "队列", points: ["循环队列（定长数组 · 牺牲一格判满）", "带头结点链式队列（尾指针维护）"], file: "ds-queue.md" },
+      { title: "栈", points: ["顺序栈（定长数组）", "链式栈（单链表头插 · 无容量上限）"], file: "ds/ds-stack.md" },
+      { title: "队列", points: ["循环队列（定长数组 · 牺牲一格判满）", "带头结点链式队列（尾指针维护）"], file: "ds/ds-queue.md" },
       { title: "字符串查找及数组矩阵压缩", points: ["多维数组（C 起步版）", "多维数组（C 版 StringMatch）", "多维数组（C++ OOP 版）"], files: [
-        { file: "ds--Array.md", label: "多维数组 C 起步" },
-        { file: "ds-stringmatch-array.md", label: "多维数组 C 版" },
-        { file: "Ds _mdArraytoCpp.md", label: "多维数组 C++ 版" },
+        { file: "ds/ds--Array.md", label: "多维数组 C 起步" },
+        { file: "ds/ds-stringmatch-array.md", label: "多维数组 C 版" },
+        { file: "ds/Ds _mdArraytoCpp.md", label: "多维数组 C++ 版" },
       ] },
     ],
   },
@@ -216,6 +216,11 @@ const COURSES = [
 function escapeHtml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* 文章路径编码：按 / 分段 encodeURIComponent，保留目录分隔符（如 ds/x.md） */
+function encFile(f) {
+  return String(f).split("/").map(encodeURIComponent).join("/");
 }
 
 /* 行内元素：`code` **粗体** *斜体* ~~删除线~~ [链接](url) ![图片](url) */
@@ -536,7 +541,7 @@ function postCardHtml(p, withTags) {
     .map(t => `<button class="tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("") : "";
   return `<article class="post-card">
     <div class="post-meta"><time>${p.date}</time>${tagHtml ? `<span class="dot">·</span>${tagHtml}` : ""}</div>
-    <h2 class="post-title"><a href="post.html#p=${encodeURIComponent(p.file)}">${escapeHtml(p.title)}</a></h2>
+    <h2 class="post-title"><a href="post.html#p=${encFile(p.file)}">${escapeHtml(p.title)}</a></h2>
     ${p.summary ? `<p class="post-summary">${escapeHtml(p.summary)}</p>` : ""}
   </article>`;
 }
@@ -625,7 +630,7 @@ function renderCourse(view, c, posts) {
   const noteLink = (f) => {
     if (!f || !f.file) return "";
     if (postSet.has(f.file)) {
-      const href = "post.html#p=" + encodeURIComponent(f.file) + (f.sec ? "&s=sec-" + f.sec : "");
+      const href = "post.html#p=" + encFile(f.file) + (f.sec ? "&s=sec-" + f.sec : "");
       return `<a class="ch-link" href="${href}">📖 ${escapeHtml(f.label || "阅读本章笔记")}</a>`;
     }
     return `<span class="ch-link todo">🚧 笔记待发布</span>`;
@@ -829,7 +834,7 @@ async function initPost() {
 
   if (!file) { content.innerHTML = localPreviewHint(); return; }
   try {
-    const res = await fetch("posts/" + encodeURIComponent(file), { cache: "no-cache" });
+    const res = await fetch("posts/" + encFile(file), { cache: "no-cache" });
     if (!res.ok) throw new Error(res.status);
     const [fm, md] = splitFrontmatter(await res.text());
     const title = meta.title || fm.title;

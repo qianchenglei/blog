@@ -1,6 +1,6 @@
 [
   {
-    "file": "Ds _mdArraytoCpp.md",
+    "file": "ds/Ds _mdArraytoCpp.md",
     "title": "C语言多维数组拓展——Cpp的封装继承多态",
     "date": "2026-09-02",
     "tags": [
@@ -11,7 +11,7 @@
     "summary": "在对C语言多维数组基本库的拓展中，用到了C++的OOP思想。"
   },
   {
-    "file": "hello.md",
+    "file": "meta/hello.md",
     "title": "博客开张：这里用来做什么",
     "date": "2026-08-31",
     "tags": [
@@ -20,7 +20,7 @@
     "summary": "建一个自己的小站，把自考和考研的笔记、进度、心得都放进来。"
   },
   {
-    "file": "courses.md",
+    "file": "meta/courses.md",
     "title": "在读课程清单",
     "date": "2026-08-30",
     "tags": [
@@ -30,7 +30,7 @@
     "summary": "目前备考的自考课程与考研资料一览，附各科文件夹里的材料情况。"
   },
   {
-    "file": "markdown-guide.md",
+    "file": "meta/markdown-guide.md",
     "title": "写作指南：本站 Markdown 语法",
     "date": "2026-08-29",
     "tags": [
@@ -39,7 +39,7 @@
     "summary": "写文章前看一眼，本站支持的全部语法示例，照着写就行。"
   },
   {
-    "file": "ds--Array.md",
+    "file": "ds/ds--Array.md",
     "title": "数据结构————手写泛型数组",
     "date": "2026-08-31",
     "tags": [
@@ -50,7 +50,7 @@
     "summary": "未完成。"
   },
   {
-    "file": "marxism-principles.md",
+    "file": "politics/marxism-principles.md",
     "title": "马克思主义基本原理：把思维导图写成一篇复习长文",
     "date": "2026-09-01",
     "tags": [
@@ -60,7 +60,7 @@
     "summary": "把 15044《马克思主义基本原理》重点标注版思维导图展开成一篇顺着读的文章：导论、哲学、政治经济学（含资本积累、垄断资本主义与当代新变化）一条线串完。"
   },
   {
-    "file": "ds-stringmatch-array.md",
+    "file": "ds/ds-stringmatch-array.md",
     "title": "多维数组模块（StringMatch）——真正的索引映射与完整增删改查",
     "date": "2026-09-01",
     "tags": [
@@ -71,7 +71,7 @@
     "summary": "昨天的 DS-ARRAY 只做了“模拟多维”，今天补上了真正的多维下标到一维偏移的映射（Tool_GetAndEffectiveIndex），并修掉了删除留洞、内存泄漏两大问题，新增插入/取值/改值/查找。"
   },
   {
-    "file": "ds-ccc-seqlist.md",
+    "file": "ds/ds-ccc-seqlist.md",
     "title": "顺序表（CCC）：可落盘多表的线性表顺序存储",
     "date": "2026-09-02",
     "tags": [
@@ -83,7 +83,7 @@
     "summary": "顺序表工程总结：带磁盘持久化与多表切换的菜单系统，附读盘信任文件头、文件名缓冲不足等真实 bug 清单。"
   },
   {
-    "file": "ds-danlianbiao.md",
+    "file": "ds/ds-danlianbiao.md",
     "title": "单链表（danlianbiao）：带头结点链表与学生记录",
     "date": "2026-09-02",
     "tags": [
@@ -95,7 +95,7 @@
     "summary": "带头结点单链表总结：初始化、头/尾/按位插入、多种方式查找；当前头文件与实现不一致无法编译，尾插自环、全程漏 free。"
   },
   {
-    "file": "ds-stack.md",
+    "file": "ds/ds-stack.md",
     "title": "栈（StackAndHeap）：顺序栈与链式栈",
     "date": "2026-09-02",
     "tags": [
@@ -107,7 +107,7 @@
     "summary": "栈（LIFO）的两种实现总结：定长数组的顺序栈 + 单链表头插的链式栈；含 DestroyStack 无判空、StackEmpty(NULL) 语义颠倒等坑。"
   },
   {
-    "file": "ds-queue.md",
+    "file": "ds/ds-queue.md",
     "title": "队列（StackAndHeap）：循环队列与带头结点链式队列",
     "date": "2026-09-02",
     "tags": [
@@ -119,7 +119,7 @@
     "summary": "队列（FIFO）的两种实现总结：定长数组的循环队列 + 带头结点链式队列；含 InitLLQueue 头结点 Next 未初始化（未 Push 即销毁会崩）等坑。"
   },
   {
-    "file": "ds-lianbiao-students.md",
+    "file": "ds/ds-lianbiao-students.md",
     "title": "链表·学生管理（lianbiao）：四种链表形态 + 视图层",
     "date": "2026-09-02",
     "tags": [
@@ -131,3 +131,4 @@
     "summary": "单/双/循环单/循环双四种链表共用一套结构 + 状态机中文菜单；循环链表删除越界误判、全工程无 free、UUID 同秒重复。"
   }
 ]
+

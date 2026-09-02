@@ -42,8 +42,8 @@ blog/
 
 ## 写新文章（两步）
 
-1. 在 `posts/` 下新建 `xxx.md`（文件名建议用英文）
-2. 在 `posts.json` 数组里加一条（格式看 `posts/markdown-guide.md` 里的示例）
+1. 在 `posts/` 下新建 `xxx.md`（文件名建议用英文；建议按科目放入子目录，如 `posts/ds/`、`posts/politics/`、`posts/meta/`，便于本地查找）
+2. 在 `posts.json` 数组里加一条，`file` 填 **相对 posts/ 的路径**（如在子目录里写 `"ds/xxx.md"`；格式看 `posts/markdown-guide.md` 里的示例）
 
 刷新首页即可看到。语法示例与图片用法见站内《写作指南》一文。
 

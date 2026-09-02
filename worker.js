@@ -154,8 +154,11 @@ async function commitChanges(env, message, changes) {
 }
 
 /* ---------- 业务：文章 ---------- */
-const FILE_RE = /^[\w\u4e00-\u9fa5][\w\u4e00-\u9fa5 .()-]*\.md$/;
-const fileOk = f => typeof f === "string" && f.length <= 120 && !f.includes("..") && FILE_RE.test(f);
+/* 文件名允许带分类子目录（如 ds/xxx.md）；校验每个段：字母数字汉字、空格 . ( ) - _ */
+const FILE_RE = /^[\w\u4e00-\u9fa5][\w\u4e00-\u9fa5 .()\-]*(?:\/[\w\u4e00-\u9fa5][\w\u4e00-\u9fa5 .()\-]*)*\.md$/;
+const fileOk = f => typeof f === "string" && f.length <= 160 && !f.includes("..") && !f.includes("\\") && FILE_RE.test(f);
+/* 路径编码：按 / 分段编码，保留目录分隔符（GitHub contents 路径不能整体 %2F） */
+const encPath = p => String(p).split("/").map(encodeURIComponent).join("/");
 
 function bad(msg) { const e = new Error(msg); e.status = 400; throw e; }
 
@@ -192,7 +195,7 @@ async function handleGetPost(env, url) {
   needEnv(env, ["GH_TOKEN"]);
   const file = url.searchParams.get("file") || "";
   if (!fileOk(file)) bad("文件名不合法");
-  const { sha, content } = await readGhFile(env, "posts/" + encodeURIComponent(file));
+  const { sha, content } = await readGhFile(env, "posts/" + encPath(file));
   return json({ file, sha, content });
 }
 
