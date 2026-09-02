@@ -1,11 +1,12 @@
 /* =====================================================
- * Cloudflare Pages Functions —— 后台管理接口（/api/*）
+ * Cloudflare Worker 后端 —— admin.html 管理后台的 API + 静态资源
  *
- * admin.html 的后端：账号密码登录后签发 HMAC 签名的 HttpOnly Cookie；
- * 文章的新建 / 修改 / 删除通过 GitHub Git Data API 以【单个 commit】
- * 写回仓库（同时更新 posts/xxx.md 与 posts.json），push 即触发 Pages 自动部署。
+ * 路由规则（Workers 静态资源默认"先找文件、找不到才进 Worker"）：
+ *   /api/*   → 下面的 API 逻辑（登录 / 文章增删改，走 GitHub API 提交）
+ *   其余     → env.ASSETS.fetch()，由静态资源层返回
+ *              （index.html、admin.html、posts/、assets/ 等）
  *
- * 需要在 Pages 项目 → 设置 → 变量和机密 中配置：
+ * 需要在 Worker → 设置 → 变量和机密 中配置：
  *   ADMIN_USER     后台登录用户名（必填）
  *   ADMIN_PASS     后台登录密码   （必填）
  *   GH_TOKEN       GitHub Token，细粒度、仅授权本仓库、Contents 读写（必填）
@@ -71,7 +72,7 @@ async function checkAuth(request, env) {
   return safeEq(sig, await hmac(await sessionKey(env), `${exp}.${nonce}`));
 }
 
-/* 登录失败限速：每 IP 十分钟内最多 8 次（内存版，隔离实例重启即清零，够个人站用） */
+/* 登录失败限速：每 IP 十分钟内最多 8 次（内存版，实例重启即清零，够个人站用） */
 const attempts = new Map();
 function loginBlocked(ip) {
   const now = Date.now();
@@ -87,7 +88,7 @@ const ghBranch = env => env.GH_BRANCH || "main";
 function needEnv(env, keys) {
   const missing = keys.filter(k => !env[k]);
   if (missing.length) {
-    const e = new Error("后台未配置：缺少环境变量 " + missing.join("、") + "（Pages 项目 → 设置 → 变量和机密）");
+    const e = new Error("后台未配置：缺少环境变量 " + missing.join("、") + "（Worker → 设置 → 变量和机密）");
     e.status = 500;
     throw e;
   }
@@ -245,7 +246,7 @@ async function handleDelete(env, request) {
 async function handleLogin(env, request) {
   if (!originOk(request)) { const e = new Error("来源校验失败"); e.status = 403; throw e; }
   if (!env.ADMIN_USER || !env.ADMIN_PASS || !env.GH_TOKEN)
-    return json({ error: "后台未配置：请在 Pages 项目 → 设置 → 变量和机密 中设置 ADMIN_USER、ADMIN_PASS、GH_TOKEN" }, 500);
+    return json({ error: "后台未配置：请在 Worker → 设置 → 变量和机密 中设置 ADMIN_USER、ADMIN_PASS、GH_TOKEN" }, 500);
 
   const ip = request.headers.get("CF-Connecting-IP") || "local";
   if (loginBlocked(ip)) return json({ error: "尝试次数过多，请 10 分钟后再试" }, 429);
@@ -265,9 +266,8 @@ async function handleLogin(env, request) {
   });
 }
 
-/* ---------- 路由 ---------- */
-export async function onRequest(context) {
-  const { request, env } = context;
+/* ---------- API 路由 ---------- */
+async function handleApi(request, env) {
   const url = new URL(request.url);
   const route = url.pathname.replace(/^\/api\/?/, "").replace(/\/+$/, "");
   const method = request.method;
@@ -293,3 +293,14 @@ export async function onRequest(context) {
     return json({ error: err.message || "服务器内部错误" }, err.status || 500);
   }
 }
+
+/* ---------- 入口：/api/* 进 API，其余交给静态资源 ---------- */
+export default {
+  async fetch(request, env) {
+    const { pathname } = new URL(request.url);
+    if (pathname === "/api" || pathname.startsWith("/api/")) {
+      return handleApi(request, env);
+    }
+    return env.ASSETS.fetch(request);
+  },
+};

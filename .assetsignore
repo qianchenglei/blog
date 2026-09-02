@@ -1,0 +1,13 @@
+# 这些文件是仓库的"内部文件"，不作为静态资源部署到线上
+.git
+.wrangler
+.idea
+.vscode
+node_modules
+.dev.vars
+.gitignore
+.assetsignore
+worker.js
+wrangler.jsonc
+README.md
+*.log

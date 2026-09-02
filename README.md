@@ -57,38 +57,55 @@ blog/
 在 blog 目录下任选一种方式起个本地服务器：
 
 ```bash
-npx serve .                # 有 Node
-python -m http.server      # 有 Python
+npx serve .                # 有 Node（只看静态页面）
+python -m http.server      # 有 Python（只看静态页面）
 ```
 
 然后访问终端里显示的地址（如 http://localhost:3000）。
 
-## 部署到 Cloudflare Pages（当前方案）
+**如果还要测管理后台的 API**（登录/保存文章），用 `npx wrangler dev`：
 
-纯静态、零配置，连接 GitHub 仓库后 push 自动重新部署。
+```bash
+npx wrangler dev --port 8790
+```
 
-1. 先把本仓库推到 GitHub。
-2. [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
-   → **Create** → **Pages** → **连接到 Git**，选中本仓库。
-3. **Framework preset** 选 **None**（本站无框架）。
-4. **Build command 留空**，**Build output directory 填 `/`**
-   （因为 index.html 在仓库根目录）。
-5. 保存，稍等片刻，Pages 会生成一个 `xxx.pages.dev` 域名，部署即完成。
-6. 以后每次 `git push` 到 master 都会自动触发重新部署。
+它会把静态资源和 `/api/*` 一起跑起来，访问 `http://localhost:8790/` 或
+`http://localhost:8790/admin.html`。本地环境变量从 `.dev.vars` 读（见下文
+"管理后台" 一节，文件已被 .gitignore 忽略）。
 
-### 绑定自定义域名（可选）
+## 部署方案：Cloudflare Worker + 静态资源 + 管理后台
 
-Pages 项目 → **Custom domains** → **Set up a custom domain**，
-按提示添加 CNAME 记录即可。本站所有链接都是相对路径，子路径也直接可用。
+站点由一个 **Worker**（`worker.js`）+ **静态资源**（仓库根目录的文件）组成，
+由 Workers Builds 自动部署：每次 `git push` 到 GitHub，Cloudflare 自动跑
+`npx wrangler deploy` 上线。
 
-> 本站无构建、无依赖，部署免费；Pages 静态请求在免费额度内不收费。
+- `worker.js`：管理后台的 API（`/api/login`、`/api/posts`、`/api/save` 等），
+  其余请求交给静态资源层返回。
+- `wrangler.jsonc`：Worker 名、入口、静态资源目录。
+- `.assetsignore`：不把 `.git/`、`worker.js`、`.dev.vars` 等内部文件当静态资源发布。
+- 自定义域名 `qianchenglei.xyz`（见 Cloudflare Dashboard → Workers → blog → Domains）。
+
+### 新机器 / 首次部署
+
+1. [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
+   → **Create** → **Workers** → **Connect to Git**，选 `qianchenglei/blog`。
+2. **Build settings**：
+   - Build command: `npx wrangler deploy`
+   - 部署触发分支：`main`
+3. 环境变量（Worker → Settings → Variables and Secrets），添加
+   `ADMIN_USER` / `ADMIN_PASS` / `GH_TOKEN` 三项（见"管理后台"一节）。
+4. 保存。之后每次 `git push` 到 main 都会自动重新部署。
+
+> 本地手动部署也行：`npx wrangler deploy`（已登录 `npx wrangler login`）。
+> ⚠️ 不要用 `npx wrangler versions upload`：它只上传新版本，不会把流量切到
+> 生产，线上会一直是旧版本。
 
 ## 管理后台（在线写文章）
 
-打开 `/admin.html`（如 `https://xxx.pages.dev/admin.html`），账号密码登录后即可
-新建、修改、删除文章，支持 Markdown 预览、Ctrl+S 快速保存、草稿自动暂存。
+打开 `/admin.html`（如 `https://qianchenglei.xyz/admin.html`），账号密码登录后
+即可新建、修改、删除文章，支持 Markdown 预览、Ctrl+S 快速保存、草稿自动暂存。
 每次保存会向 GitHub 推送一个提交（同时更新 `posts/xxx.md` 和 `posts.json`），
-Pages 自动重新部署，约 1 分钟后线上生效。
+Workers Builds 自动重新部署，约 1 分钟后线上生效。
 
 首次启用只需三步：
 
@@ -96,15 +113,16 @@ Pages 自动重新部署，约 1 分钟后线上生效。
    [Fine-grained tokens](https://github.com/settings/personal-access-tokens) →
    Generate new token。**Repository access 选本仓库**，权限里
    **Contents 设为 Read and write**，其余保持默认。
-2. **配置环境变量**：Pages 项目 → **Settings → Variables and Secrets**，添加：
+2. **配置环境变量**：Cloudflare Dashboard → Workers → blog →
+   **Settings → Variables and Secrets**，添加：
    - `ADMIN_USER` 后台登录用户名
    - `ADMIN_PASS` 后台登录密码
    - `GH_TOKEN` 上面生成的 Token
 
    可选项：`GH_REPO`（默认 `qianchenglei/blog`）、`GH_BRANCH`（默认 `main`）、
    `COOKIE_SECRET`（Cookie 签名密钥，不填则由账号密码派生）。
-3. **重新部署一次**：推送任意提交（或 Pages → Deployments → Retry），让
-   `functions/` 目录生效。
+3. **重新部署一次**：推送任意提交（或 Workers → blog → Deployments → Retry），
+   让新代码上线。
 
 安全说明：密码只存在 Cloudflare 环境变量里；登录后签发 HMAC 签名的
 HttpOnly Cookie（12 小时有效）；GitHub Token 只存在服务端，不会下发到浏览器。
@@ -119,19 +137,24 @@ ADMIN_PASS=你的测试密码
 GH_TOKEN=你的token（或随便填，读文章会报错）
 ```
 
-然后 `npx wrangler pages dev . --port 8790`，访问
-`http://localhost:8790/admin.html`。
+然后 `npx wrangler dev --port 8790`，访问 `http://localhost:8790/admin.html`。
 
 ## 常见问题
 
 ### 改了代码但线上没更新？
 
 确认两点：
-1. 改动已经 `git push` 到 GitHub（Pages 只跟随 GitHub 上的 master）。
-2. 在 Pages 项目 → **Deployments** 里能看到最新一次构建成功，
-   构建日志末尾应有 `Success: Build completed`。
+1. 改动已经 `git push` 到 GitHub（Workers Builds 只跟随 GitHub 上的 main）。
+2. 在 Workers → blog → **Deployments** 里能看到最新一次构建成功。
 
 ### 部署失败了？
 
-看 Pages 项目 → **Deployments** → 失败的那次 → 查看日志。
-纯静态站常见的错误是 Build output directory 填错了；确认填 `/`。
+看 Workers → blog → **Deployments** → 失败的那次 → 查看日志。常见错误：
+- 环境变量没配（`ADMIN_USER` / `ADMIN_PASS` / `GH_TOKEN`）。
+- `.assetsignore` 里的文件路径写错了。
+
+### `/admin.html` 能打开但 `/api/*` 返回 404？
+
+检查 `wrangler.jsonc` 里 `main` 指向 `worker.js`，且 `assets.binding` 是
+`ASSETS`；确认 Cloudflare Dashboard 上的 Deploy command 是 `npx wrangler deploy`
+（不是 `npx wrangler versions upload`）。
