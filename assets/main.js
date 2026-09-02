@@ -70,10 +70,13 @@ const COURSES = [
     cover: "",
     description: "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
     chapters: [
-      { title: "顺序表", points: ["顺序存储 · 按位插入/删除", "磁盘持久化多表（CCC 工程）"], file: "ds-ccc-seqlist.md" },
-      { title: "单链表", points: ["带头结点单链表", "头插 / 尾插 / 按位插入"], file: "ds-danlianbiao.md" },
-      { title: "双链表", points: ["单 / 双 / 循环单 / 循环双四种形态", "控制台视图层（lianbiao 工程）"], file: "ds-lianbiao-students.md" },
-      { title: "栈和队列", points: ["顺序栈 · 链式栈", "循环队列 · 带头结点链式队列"], file: "ds-stack-queue.md" },
+      { title: "线性表", points: ["顺序表：顺序存储 · 按位插入/删除", "单链表：带头结点 · 头尾/按位插入", "双链表：单/双/循环单/循环双四种形态"], files: [
+        { file: "ds-ccc-seqlist.md", label: "顺序表（CCC）" },
+        { file: "ds-danlianbiao.md", label: "单链表（danlianbiao）" },
+        { file: "ds-lianbiao-students.md", label: "双链表 · 四种形态（lianbiao）" },
+      ] },
+      { title: "栈", points: ["顺序栈（定长数组）", "链式栈（单链表头插 · 无容量上限）"], file: "ds-stack.md" },
+      { title: "队列", points: ["循环队列（定长数组 · 牺牲一格判满）", "带头结点链式队列（尾指针维护）"], file: "ds-queue.md" },
       { title: "字符串查找及数组矩阵压缩", points: ["多维数组（C 起步版）", "多维数组（C 版 StringMatch）", "多维数组（C++ OOP 版）"], files: [
         { file: "ds--Array.md", label: "多维数组 C 起步" },
         { file: "ds-stringmatch-array.md", label: "多维数组 C 版" },

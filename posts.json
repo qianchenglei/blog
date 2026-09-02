@@ -95,16 +95,28 @@
     "summary": "带头结点单链表总结：初始化、头/尾/按位插入、多种方式查找；当前头文件与实现不一致无法编译，尾插自环、全程漏 free。"
   },
   {
-    "file": "ds-stack-queue.md",
-    "title": "栈与队列（StackAndHeap）：四个容器实现",
+    "file": "ds-stack.md",
+    "title": "栈（StackAndHeap）：顺序栈与链式栈",
     "date": "2026-09-02",
     "tags": [
       "课程",
       "计算机学科基础",
       "数据结构（ds）",
-      "栈与队列"
+      "栈和队列"
     ],
-    "summary": "顺序栈、链式栈、循环队列、带头结点链式队列四个 ADT 总结；链队 Init 后未 Push 即销毁会踩野指针等坑。"
+    "summary": "栈（LIFO）的两种实现总结：定长数组的顺序栈 + 单链表头插的链式栈；含 DestroyStack 无判空、StackEmpty(NULL) 语义颠倒等坑。"
+  },
+  {
+    "file": "ds-queue.md",
+    "title": "队列（StackAndHeap）：循环队列与带头结点链式队列",
+    "date": "2026-09-02",
+    "tags": [
+      "课程",
+      "计算机学科基础",
+      "数据结构（ds）",
+      "栈和队列"
+    ],
+    "summary": "队列（FIFO）的两种实现总结：定长数组的循环队列 + 带头结点链式队列；含 InitLLQueue 头结点 Next 未初始化（未 Push 即销毁会崩）等坑。"
   },
   {
     "file": "ds-lianbiao-students.md",
