@@ -70,13 +70,15 @@ const COURSES = [
     cover: "",
     description: "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
     chapters: [
-      { title: "线性表 · 泛型数组（C 版起步）", points: ["一维/二维/三维逻辑抽象", "顺序存储 · 栈式插入"], file: "ds--Array.md" },
-      { title: "顺序表（CCC）", points: ["磁盘持久化多表系统", "按位插入删除 · 子菜单查询"], file: "ds-ccc-seqlist.md" },
-      { title: "单链表（danlianbiao）", points: ["带头结点单链表", "头/尾/按位插入与查找"], file: "ds-danlianbiao.md" },
-      { title: "链表·学生管理（lianbiao）", points: ["四种链表形态", "控制台视图层 · 分页打印"], file: "ds-lianbiao-students.md" },
-      { title: "栈与队列（StackAndHeap）", points: ["顺序栈 · 链式栈", "循环队列 · 带头结点链式队列"], file: "ds-stack-queue.md" },
-      { title: "多维数组（C 版 StringMatch）", points: ["多维下标→一维偏移映射", "左移删除 · 释放内存"], file: "ds-stringmatch-array.md" },
-      { title: "多维数组（C++ OOP 版）", points: ["封装 · 继承 · 多态", "模板泛化 Array1D"], file: "Ds _mdArraytoCpp.md" },
+      { title: "顺序表", points: ["顺序存储 · 按位插入/删除", "磁盘持久化多表（CCC 工程）"], file: "ds-ccc-seqlist.md" },
+      { title: "单链表", points: ["带头结点单链表", "头插 / 尾插 / 按位插入"], file: "ds-danlianbiao.md" },
+      { title: "双链表", points: ["单 / 双 / 循环单 / 循环双四种形态", "控制台视图层（lianbiao 工程）"], file: "ds-lianbiao-students.md" },
+      { title: "栈和队列", points: ["顺序栈 · 链式栈", "循环队列 · 带头结点链式队列"], file: "ds-stack-queue.md" },
+      { title: "字符串查找及数组矩阵压缩", points: ["多维数组（C 起步版）", "多维数组（C 版 StringMatch）", "多维数组（C++ OOP 版）"], files: [
+        { file: "ds--Array.md", label: "多维数组 C 起步" },
+        { file: "ds-stringmatch-array.md", label: "多维数组 C 版" },
+        { file: "Ds _mdArraytoCpp.md", label: "多维数组 C++ 版" },
+      ] },
     ],
   },
 
@@ -536,13 +538,22 @@ function postCardHtml(p, withTags) {
   </article>`;
 }
 
+/* 章节可挂的笔记清单：兼容单篇 file 与多篇 files（[file,label?,sec?]） */
+function chapterFiles(ch) {
+  if (Array.isArray(ch.files) && ch.files.length) return ch.files.map(f =>
+    typeof f === "string" ? { file: f, label: "" } : { file: f.file, label: f.label || "", sec: f.sec });
+  if (ch.file) return [{ file: ch.file, label: "", sec: ch.sec }];
+  return [];
+}
+
 /* ---------- 视图一：主页（橱窗） ---------- */
 function renderHome(view, posts) {
   const tags = [...new Set(posts.flatMap(p => p.tags || []))];
   const [line1, line2 = ""] = SITE.heroTitle.split("，");
   const books = COURSES.map((c, i) => {
     const postSet = new Set(posts.map(p => p.file));
-    const linked = new Set(c.chapters.flatMap(ch => ch.file && postSet.has(ch.file) ? [ch.file] : []));
+    const linked = new Set(c.chapters.flatMap(ch => chapterFiles(ch))
+      .filter(f => f.file && postSet.has(f.file)).map(f => f.file));
     const tagPosts = posts.filter(p => (p.tags || []).some(t => c.tags.includes(t)));
     const notes = new Set([...tagPosts.map(p => p.file), ...linked]).size;
     const meta = (c.code ? c.code + " · " : "") +
@@ -604,23 +615,30 @@ function renderHome(view, posts) {
 function renderCourse(view, c, posts) {
   const postSet = new Set(posts.map(p => p.file));
   const tagPosts = posts.filter(p => (p.tags || []).some(t => c.tags.includes(t)));
-  const linked = new Set(c.chapters.flatMap(ch => ch.file && postSet.has(ch.file) ? [ch.file] : []));
+  const linked = new Set(c.chapters.flatMap(ch => chapterFiles(ch))
+    .filter(f => f.file && postSet.has(f.file)).map(f => f.file));
   const notes = new Set([...tagPosts.map(p => p.file), ...linked]).size;
 
-  const chapters = c.chapters.length ? `<ol class="tree">` + c.chapters.map((ch, i) => {
-    let link = "";
-    if (ch.file && postSet.has(ch.file)) {
-      const href = "post.html#p=" + encodeURIComponent(ch.file) + (ch.sec ? "&s=sec-" + ch.sec : "");
-      link = `<a class="ch-link" href="${href}">📖 阅读本章笔记</a>`;
-    } else if (ch.file) {
-      link = `<span class="ch-link todo">🚧 笔记待发布</span>`;
+  const noteLink = (f) => {
+    if (!f || !f.file) return "";
+    if (postSet.has(f.file)) {
+      const href = "post.html#p=" + encodeURIComponent(f.file) + (f.sec ? "&s=sec-" + f.sec : "");
+      return `<a class="ch-link" href="${href}">📖 ${escapeHtml(f.label || "阅读本章笔记")}</a>`;
     }
+    return `<span class="ch-link todo">🚧 笔记待发布</span>`;
+  };
+
+  const chapters = c.chapters.length ? `<ol class="tree">` + c.chapters.map((ch, i) => {
+    const files = chapterFiles(ch);
+    const link = files.length
+      ? (files.length > 1 ? `<div class="ch-notes">${files.map(noteLink).join("")}</div>` : noteLink(files[0]))
+      : "";
     return `<li class="chapter reveal" style="animation-delay:${i * 80}ms">
       <button class="ch-head" type="button">
         <span class="ch-dot"></span>
         <span class="ch-num">${String(i + 1).padStart(2, "0")}</span>
         <span class="ch-title">${escapeHtml(ch.title)}</span>
-        <span class="ch-meta">${ch.points.length} 个知识点</span>
+        <span class="ch-meta">${ch.points.length} 个知识点${files.length ? " · " + files.length + " 篇笔记" : ""}</span>
         <span class="ch-chev">▾</span>
       </button>
       <div class="ch-body"><div class="ch-inner">

@@ -643,6 +643,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2.2em 0; }
   transition: transform .16s ease, box-shadow .16s ease;
 }
 .ch-link:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15, 118, 110, .3); }
+.ch-notes { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 18px 34px; }
+.ch-notes .ch-link { margin: 0; }
 .ch-link.todo {
   background: none;
   color: var(--muted);
