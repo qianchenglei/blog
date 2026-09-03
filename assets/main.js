@@ -77,10 +77,11 @@ const COURSES = [
       ] },
       { title: "栈", points: ["顺序栈（定长数组）", "链式栈（单链表头插 · 无容量上限）"], file: "ds/ds-stack.md" },
       { title: "队列", points: ["循环队列（定长数组 · 牺牲一格判满）", "带头结点链式队列（尾指针维护）"], file: "ds/ds-queue.md" },
-      { title: "字符串查找及数组矩阵压缩", points: ["多维数组（C 起步版）", "多维数组（C 版 StringMatch）", "多维数组（C++ OOP 版）"], files: [
+      { title: "字符串查找及数组矩阵压缩", points: ["多维数组（C 起步版）", "多维数组（C 版 StringMatch）", "多维数组（C++ OOP 版）", "矩阵压缩：对称已实现 · 三角/稀疏待写"], files: [
         { file: "ds/ds--Array.md", label: "多维数组 C 起步" },
         { file: "ds/ds-stringmatch-array.md", label: "多维数组 C 版" },
         { file: "ds/Ds _mdArraytoCpp.md", label: "多维数组 C++ 版" },
+        { file: "ds/ds-stringmatch-cpp-fixes.md", label: "矩阵压缩（对称 ✅ · 三角/稀疏 ⬜）" },
       ] },
     ],
   },
