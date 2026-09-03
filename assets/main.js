@@ -411,23 +411,47 @@ function localPreviewHint() {
     （部署到 GitHub Pages / Cloudflare 后不会有这个问题）。</div>`;
 }
 
-/* 封面：真实图片找不到就自动画占位封面，以后丢图进 assets/covers/ 即生效 */
+/* 封面清单制：
+ * 一次请求 assets/covers/manifest.json 就能知道每本书有没有真实封面，
+ * 不再对每本无封面书逐个探测 .jpg/.jpeg/.png/.webp（旧实现每次开主页
+ * 都会产生几十个 404 请求，流量全花在探测上）。
+ * manifest 不存在时（如 file:// 本地预览）自动退回旧探测方式。
+ */
+const coverManifestPromise = fetch("assets/covers/manifest.json", { cache: "no-cache" })
+  .then(r => (r.ok ? r.json() : null))
+  .catch(() => null);
+
 const coverCache = {};
+const COVER_EXTS = ["jpg", "jpeg", "png", "webp"];
+
 function applyCover(el, course) {
   const key = course.cover || course.id;
   const use = url => {
     el.style.backgroundImage = `linear-gradient(rgba(20,10,5,.18), rgba(20,10,5,.38)), url("${url}")`;
     el.classList.add("has-img");
   };
-  if (coverCache[key]) { if (coverCache[key] !== "none") use(coverCache[key]); return; }
-  const exts = ["jpg", "jpeg", "png", "webp"];
-  (function probe(i) {
-    if (i >= exts.length) { coverCache[key] = "none"; return; }
-    const img = new Image();
-    img.onload = () => { coverCache[key] = el.dataset.coverSrc = `assets/covers/${course.id}.${exts[i]}`; use(coverCache[key]); };
-    img.onerror = () => probe(i + 1);
-    img.src = `assets/covers/${course.id}.${exts[i]}`;
-  })(0);
+  if (coverCache[key]) { if (coverCache[key] !== "none" && coverCache[key] !== "pending") use(coverCache[key]); return; }
+  if (course.cover) { coverCache[key] = el.dataset.coverSrc = course.cover; use(course.cover); return; }
+
+  // 旧式逐个探测（仅当 manifest 加载失败时作为兜底）
+  const probeFallback = () => {
+    (function probe(i) {
+      if (i >= COVER_EXTS.length) { coverCache[key] = "none"; return; }
+      const img = new Image();
+      img.onload = () => { coverCache[key] = el.dataset.coverSrc = `assets/covers/${course.id}.${COVER_EXTS[i]}`; use(coverCache[key]); };
+      img.onerror = () => probe(i + 1);
+      img.src = `assets/covers/${course.id}.${COVER_EXTS[i]}`;
+    })(0);
+  };
+
+  coverCache[key] = "pending";
+  coverManifestPromise.then(files => {
+    if (coverCache[key] !== "pending") return;   // 期间已被其它逻辑处理
+    if (!Array.isArray(files)) { probeFallback(); return; }
+    const found = COVER_EXTS.map(e => `${course.id}.${e}`).find(f => files.includes(f));
+    if (found) { const url = `assets/covers/${found}`; coverCache[key] = el.dataset.coverSrc = url; use(url); }
+    else coverCache[key] = "none";
+  });
 }
 
 function coverHtml(course, mini) {
