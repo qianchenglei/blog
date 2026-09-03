@@ -270,6 +270,72 @@ async function handleLogin(env, request) {
   });
 }
 
+/* ---------- 状态查询（/api/status，公开只读）
+ * 需要额外环境变量（Worker → 设置 → 变量和机密，可选）：
+ *   CF_API_TOKEN    Cloudflare 只读 API Token（Pages/Workers 部署读取）
+ *   CF_ACCOUNT_ID   Cloudflare 账户 ID（仪表盘首页可查）
+ *   CF_PROJECT      项目名，默认 blog
+ *   CF_DEPLOY_KIND  worker 或 pages，默认 worker
+ * ------------------------------------------------- */
+async function handleStatus(env) {
+  const repo = ghRepo(env), branch = ghBranch(env);
+
+  // GitHub 远端最新提交（需要 GH_TOKEN；和后台共用同一个即可）
+  let git = { ok: false, error: "未配置 GH_TOKEN" };
+  if (env.GH_TOKEN) {
+    try {
+      const cs = await gh(env, `/repos/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=5`);
+      git = {
+        ok: true, branch,
+        commits: cs.map(c => ({
+          sha: c.sha,
+          short: String(c.sha).slice(0, 7),
+          date: (c.commit && c.commit.committer && c.commit.committer.date) || "",
+          author: (c.commit && c.commit.author && c.commit.author.name) || "",
+          message: ((c.commit && c.commit.message) || "").split("\n")[0],
+        })),
+      };
+    } catch (e) { git = { ok: false, error: e.message }; }
+  }
+
+  // Cloudflare 最近部署（无 token 就返回未配置提示）
+  let cf = { configured: false, hint: "未配置 CF_API_TOKEN / CF_ACCOUNT_ID（Worker 设置 → 变量和机密）" };
+  if (env.CF_API_TOKEN && env.CF_ACCOUNT_ID) {
+    try {
+      const kind = (env.CF_DEPLOY_KIND || "worker").toLowerCase();
+      const project = env.CF_PROJECT || "blog";
+      const p = kind === "pages"
+        ? `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${project}/deployments?per_page=5`
+        : `/accounts/${env.CF_ACCOUNT_ID}/workers/scripts/${project}/deployments?per_page=5`;
+      const res = await fetch("https://api.cloudflare.com/client/v4" + p, {
+        headers: { authorization: `Bearer ${env.CF_API_TOKEN}`, "content-type": "application/json" },
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok || !body || body.success === false) {
+        const errMsg = body && body.errors && body.errors[0] ? body.errors[0].message : (body || {});
+        cf = { configured: true, ok: false, status: res.status, error: typeof errMsg === "string" ? errMsg : JSON.stringify(errMsg) };
+      } else {
+        let list = Array.isArray(body.result) ? body.result
+          : (body.result && Array.isArray(body.result.deployments) ? body.result.deployments : null);
+        cf = {
+          configured: true, ok: true, kind, project,
+          latest: (list || []).map(d => ({
+            id: d.id || "",
+            short: String(d.id || "").slice(0, 8),
+            url: d.url || null,
+            created_on: d.created_on || d.modified_on || "",
+            source_type: (d.source && d.source.type) || null,
+            trigger: (d.trigger_metadata && d.trigger_metadata.created_from) || null,
+            commit: (d.trigger_metadata && (d.trigger_metadata.commit_hash || d.trigger_metadata.commit)) || null,
+          })),
+        };
+      }
+    } catch (e) { cf = { configured: true, ok: false, error: String((e && e.message) || e) }; }
+  }
+
+  return json({ ok: true, repo, branch, git, cf, at: new Date().toISOString() });
+}
+
 /* ---------- API 路由 ---------- */
 async function handleApi(request, env) {
   const url = new URL(request.url);
@@ -279,6 +345,7 @@ async function handleApi(request, env) {
   try {
     if (method === "OPTIONS") return new Response(null, { status: 204 });
     if (route === "login" && method === "POST") return await handleLogin(env, request);
+    if (route === "status" && method === "GET") return await handleStatus(env);   // 公开状态
 
     if (!(await checkAuth(request, env)))
       return json({ error: "未登录或登录已过期" }, 401);

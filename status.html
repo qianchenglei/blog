@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>发布状态 · 我命由我不由天</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#f7f6f2; --card:#fff; --text:#26292e; --muted:#7a828c;
+      --border:#e7e4dc; --accent:#0f766e; --ok:#16a34a; --warn:#d97706; --err:#d64545; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f1317; --card:#151b21; --text:#dfe3e8;
+      --muted:#8b949e; --border:#242b33; --accent:#2fd0bd; } }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font: 15px/1.7 system-ui,"PingFang SC","Microsoft YaHei",sans-serif; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; }
+    .bar { display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+    button { border:1px solid var(--border); background:var(--card); color:var(--text); padding:8px 16px;
+      border-radius:999px; cursor:pointer; font: inherit; font-size:13.5px; }
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    .updated { color: var(--muted); font-size: 12.5px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px;
+      padding:16px 18px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+    .card h2 { margin:0 0 10px; font-size:15px; letter-spacing:.04em; color:var(--muted);
+      display:flex; align-items:center; gap:8px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#888; display:inline-block; }
+    .dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.err { background: var(--err); }
+    table { width:100%; border-collapse:collapse; font-size:13.5px; }
+    td, th { padding:7px 8px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+    tr:last-child td { border-bottom:none; }
+    td.sha, th.sha { font-family:"JetBrains Mono",Consolas,monospace; white-space:nowrap; font-size:12.5px; }
+    td.time { color: var(--muted); white-space:nowrap; font-size:12.5px; }
+    .muted { color: var(--muted); }
+    .msg { color: var(--muted); font-size: 13px; }
+    .err { color: var(--err); font-size: 13px; }
+    code { background:#00000012; padding:1px 5px; border-radius:5px; font-size:12.5px;
+      font-family:"JetBrains Mono",Consolas,monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🚦 发布状态查询</h1>
+    <p class="sub">打开即看：远端最新提交 与 Cloudflare 最近部署 —— 不用登 CF 后台。</p>
+    <div class="bar">
+      <button id="refresh" type="button">↻ 立即刷新</button>
+      <span class="updated" id="updated"></span>
+    </div>
+
+    <div class="card" id="git-card">
+      <h2><span class="dot" id="git-dot"></span> GitHub 远端最新提交（部署来源）
+        <span class="muted" id="git-branch" style="font-weight:400"></span></h2>
+      <div id="git-body" class="msg">加载中…</div>
+    </div>
+
+    <div class="card" id="cf-card">
+      <h2><span class="dot" id="cf-dot"></span> Cloudflare 最近部署</h2>
+      <div id="cf-body" class="msg">加载中…</div>
+    </div>
+
+    <p class="muted" style="font-size:12.5px">提示：CF 状态为空时，在 Worker → 设置 → 变量和机密 补
+      <code>CF_API_TOKEN</code>、<code>CF_ACCOUNT_ID</code>（可选 <code>CF_PROJECT</code>、<code>CF_DEPLOY_KIND</code>=worker/pages），再部署一次即可。</p>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const time = iso => iso ? new Date(iso).toLocaleString() : "—";
+
+    function setDot(id, state) {
+      const el = $(id);
+      el.className = "dot " + state; // ok / warn / err
+    }
+
+    function renderGit(g) {
+      setDot("git-dot", g.ok ? "ok" : "err");
+      $("git-branch").textContent = g.ok ? `@ ${g.branch}` : "";
+      if (!g.ok) { $("git-body").innerHTML = `<div class="err">${g.error}</div>`; return; }
+      if (!g.commits || !g.commits.length) { $("git-body").textContent = "还没有提交。"; return; }
+      $("git-body").innerHTML =
+        "<table><thead><tr><th class='sha'>commit</th><th>说明</th><th>作者</th><th class='time'>时间</th></tr></thead><tbody>" +
+        g.commits.map(c => `<tr><td class="sha">${c.short}</td><td>${c.message}</td><td>${c.author}</td>` +
+          `<td class="time">${time(c.date)}</td></tr>`).join("") +
+        "</tbody></table>";
+    }
+
+    function renderCf(cf) {
+      if (!cf.configured) { setDot("cf-dot", "warn"); $("cf-body").textContent = cf.hint || "未配置"; return; }
+      if (!cf.ok) { setDot("cf-dot", "err"); $("cf-body").innerHTML = `<div class="err">${cf.error}</div>`; return; }
+      setDot("cf-dot", "ok");
+      if (!cf.latest || !cf.latest.length) { $("cf-body").textContent = "还没有部署记录。"; return; }
+      $("cf-body").innerHTML =
+        "<table><thead><tr><th class='sha'>id</th><th>来源</th><th class='time'>时间</th><th>url / commit</th></tr></thead><tbody>" +
+        cf.latest.map(d => `<tr><td class="sha">${d.short}</td><td>${d.source_type || d.trigger || "—"}</td>` +
+          `<td class="time">${time(d.created_on)}</td>` +
+          `<td>${d.url ? `<a href="${d.url}" target="_blank" rel="noopener">打开</a>` : (d.commit ? `<span class="sha">${d.commit.slice(0,7)}</span>` : "—")}</td></tr>`).join("") +
+        "</tbody></table>";
+    }
+
+    async function load() {
+      try {
+        const res = await fetch("/api/status", { cache: "no-store" });
+        const d = await res.json();
+        if (!res.ok || !d.ok) throw new Error(d.error || ("HTTP " + res.status));
+        renderGit(d.git);
+        renderCf(d.cf);
+        $("updated").textContent = "更新于 " + time(d.at) + " · " + d.repo + " @" + d.branch;
+      } catch (e) {
+        setDot("git-dot", "err"); setDot("cf-dot", "err");
+        $("git-body").textContent = "加载失败：" + e.message;
+        $("cf-body").textContent = "加载失败：" + e.message;
+        $("updated").textContent = "更新于 " + time(new Date().toISOString());
+      }
+    }
+
+    $("refresh").addEventListener("click", load);
+    load();
+    setInterval(load, 45000);   // 每 45 秒自动刷新
+  </script>
+</body>
+</html>
