@@ -81,9 +81,9 @@
 <body data-page="admin">
   <nav class="topnav" id="topnav">
     <div class="wrap-wide nav-in">
-      <a class="brand" href="index.html"><span class="brand-mark">📚</span><span id="site-title">…</span></a>
+      <a class="brand" href="./"><span class="brand-mark">📚</span><span id="site-title">…</span></a>
       <div class="nav-right">
-        <a class="nav-link" href="index.html" target="_blank">打开站点 ↗</a>
+        <a class="nav-link" href="./" target="_blank">打开站点 ↗</a>
         <button id="theme-toggle" class="theme-toggle" title="切换深浅色" aria-label="切换深浅色">🌓</button>
         <button id="logout-btn" class="nav-link adm-hidden" style="border:none;background:none;cursor:pointer">退出登录</button>
       </div>
@@ -267,7 +267,7 @@
           <td class="t-file">${escapeHtml(p.file)}</td>
           <td class="t-ops">
             <button class="adm-link act-edit">✏️ 编辑</button>
-            <a class="adm-link" href="post.html#p=${encodeURIComponent(p.file)}" target="_blank">↗ 查看</a>
+            <a class="adm-link" href="post#p=${encodeURIComponent(p.file)}" target="_blank">↗ 查看</a>
             <button class="adm-link danger act-del">🗑 删除</button>
           </td>`;
         tr.querySelector(".t-title").addEventListener("click", () => openEditor(p.file));

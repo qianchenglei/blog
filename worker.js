@@ -366,11 +366,25 @@ async function handleApi(request, env) {
 }
 
 /* ---------- 入口：/api/* 进 API，其余交给静态资源 ---------- */
+/* 无 .html 后缀的干净地址 → 内部改写回对应 html（旧的 /xxx.html 依然有效） */
+const CLEAN_URLS = {
+  "/status": "/status.html",
+  "/admin": "/admin.html",
+  "/post": "/post.html",
+  "/index": "/index.html",
+};
+
 export default {
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url);
+    const { pathname } = url;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       return handleApi(request, env);
+    }
+    const target = CLEAN_URLS[pathname];
+    if (target) {
+      url.pathname = target;
+      return env.ASSETS.fetch(new Request(url, request));
     }
     return env.ASSETS.fetch(request);
   },

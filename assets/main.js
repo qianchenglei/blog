@@ -542,7 +542,7 @@ function postCardHtml(p, withTags) {
     .map(t => `<button class="tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("") : "";
   return `<article class="post-card">
     <div class="post-meta"><time>${p.date}</time>${tagHtml ? `<span class="dot">·</span>${tagHtml}` : ""}</div>
-    <h2 class="post-title"><a href="post.html#p=${encFile(p.file)}">${escapeHtml(p.title)}</a></h2>
+    <h2 class="post-title"><a href="post#p=${encFile(p.file)}">${escapeHtml(p.title)}</a></h2>
     ${p.summary ? `<p class="post-summary">${escapeHtml(p.summary)}</p>` : ""}
   </article>`;
 }
@@ -631,7 +631,7 @@ function renderCourse(view, c, posts) {
   const noteLink = (f) => {
     if (!f || !f.file) return "";
     if (postSet.has(f.file)) {
-      const href = "post.html#p=" + encFile(f.file) + (f.sec ? "&s=sec-" + f.sec : "");
+      const href = "post#p=" + encFile(f.file) + (f.sec ? "&s=sec-" + f.sec : "");
       return `<a class="ch-link" href="${href}">📖 ${escapeHtml(f.label || "阅读本章笔记")}</a>`;
     }
     return `<span class="ch-link todo">🚧 笔记待发布</span>`;
@@ -829,7 +829,7 @@ async function initPost() {
   const last = sessionStorage.getItem("lastCourse");
   const c = last && COURSES.find(x => x.id === last);
   if (back && c) {
-    back.href = "index.html#/course/" + c.id;
+    back.href = "/#/course/" + c.id;
     back.textContent = "← 返回《" + c.title + "》";
   }
 
