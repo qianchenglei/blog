@@ -298,15 +298,26 @@ async function handleStatus(env) {
     } catch (e) { git = { ok: false, error: e.message }; }
   }
 
-  // Cloudflare 最近部署（无 token 就返回未配置提示）
-  let cf = { configured: false, hint: "未配置 CF_API_TOKEN / CF_ACCOUNT_ID（Worker 设置 → 变量和机密）" };
-  if (env.CF_API_TOKEN && env.CF_ACCOUNT_ID) {
+  // Cloudflare 最近部署（无 token 就返回未配置提示；没填 CF_ACCOUNT_ID 时自动解析）
+  async function resolveAccountId() {
+    const r = await fetch("https://api.cloudflare.com/client/v4/accounts?per_page=1", {
+      headers: { authorization: `Bearer ${env.CF_API_TOKEN}`, "content-type": "application/json" },
+    });
+    const b = await r.json().catch(() => null);
+    if (!r.ok || !b || b.success !== true || !Array.isArray(b.result) || !b.result.length)
+      throw new Error((b && b.errors && b.errors[0] && b.errors[0].message) || "无法解析账户 ID");
+    return b.result[0].id;
+  }
+
+  let cf = { configured: false, hint: "未配置 CF_API_TOKEN（Worker 设置 → 变量和机密 里加一个 Secret）" };
+  if (env.CF_API_TOKEN) {
     try {
+      const account = env.CF_ACCOUNT_ID || (await resolveAccountId());
       const kind = (env.CF_DEPLOY_KIND || "worker").toLowerCase();
       const project = env.CF_PROJECT || "blog";
       const p = kind === "pages"
-        ? `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${project}/deployments?per_page=5`
-        : `/accounts/${env.CF_ACCOUNT_ID}/workers/scripts/${project}/deployments?per_page=5`;
+        ? `/accounts/${account}/pages/projects/${project}/deployments?per_page=5`
+        : `/accounts/${account}/workers/scripts/${project}/deployments?per_page=5`;
       const res = await fetch("https://api.cloudflare.com/client/v4" + p, {
         headers: { authorization: `Bearer ${env.CF_API_TOKEN}`, "content-type": "application/json" },
       });
