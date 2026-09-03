@@ -344,12 +344,7 @@ async function handleStatus(env) {
     } catch (e) { cf = { configured: true, ok: false, error: String((e && e.message) || e) }; }
   }
 
-  const KNOWN_ENV = ["ADMIN_USER", "ADMIN_PASS", "GH_TOKEN", "GH_REPO", "GH_BRANCH",
-                     "CF_API_TOKEN", "CF_ACCOUNT_ID", "CF_PROJECT", "CF_DEPLOY_KIND"];
-  // 只回显“存在且非空”的变量名（绝不回显值），用于排查线上环境变量是否生效
-  const envDefined = KNOWN_ENV.filter(k => typeof env[k] === "string" && env[k].length > 0);
-
-  return json({ ok: true, repo, branch, envDefined, git, cf, at: new Date().toISOString() });
+  return json({ ok: true, repo, branch, git, cf, at: new Date().toISOString() });
 }
 
 /* ---------- API 路由 ---------- */
