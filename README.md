@@ -29,7 +29,9 @@ blog/
 - `#/posts` 全部文章（标签筛选）
 - `#/course/<id>` 一门课的知识结构页（点书架上的书进入）
 
-## 书架与知识结构（改 `assets/main.js` 里的 `COURSES`）
+## 书架与知识结构（改 `assets/courses.json`，纯数据、不碰 JS）
+
+> `assets/main.js` 只负责启动时拉取 `assets/courses.json` 并渲染，**加书 / 加章节 / 挂笔记都只改 JSON**（改完语法上就安全，改坏了页面也能提示加载失败）。
 
 书架上每一本书是一个对象：
 
@@ -40,10 +42,19 @@ blog/
 
 文章页的“← 返回”会记住你从哪本书进来，直接回到那门课的知识结构。
 
-## 写新文章（两步）
+## 写新文章并挂进书架（三步）
 
 1. 在 `posts/` 下新建 `xxx.md`（文件名建议用英文；建议按科目放入子目录，如 `posts/ds/`、`posts/politics/`、`posts/meta/`，便于本地查找）
-2. 在 `posts.json` 数组里加一条，`file` 填 **相对 posts/ 的路径**（如在子目录里写 `"ds/xxx.md"`；格式看 `posts/markdown-guide.md` 里的示例）
+2. 在 `posts.json` 数组里加一条，`file` 填 **相对 posts/ 的路径**（如在子目录里写 `"ds/xxx.md"`；格式看 `posts/markdown-guide.md` 里的示例）——这一步在管理后台 `/admin` 发文章也会自动做
+3. （可选）想让它出现在某本书的“章节”里：打开 `assets/courses.json`，在对应书的 `chapters` 里找合适章节，往它的 `files` 数组加一项：
+   ```json
+   { "file": "ds/xxx.md", "label": "章节里显示的名字" }
+   ```
+   单篇挂载也可写 `"file": "ds/xxx.md"`；要点击后直接跳到文章某个 `##` 小节，就写
+   ```json
+   { "file": "ds/xxx.md", "label": "…", "sec": 3 }
+   ```
+   `sec` 是第几个二级标题（`##` 从 1 开始数）。
 
 刷新首页即可看到。语法示例与图片用法见站内《写作指南》一文。
 

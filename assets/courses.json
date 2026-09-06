@@ -1,0 +1,385 @@
+[
+  {
+    "id": "politics",
+    "code": "考研政治",
+    "title": "考研政治",
+    "emoji": "🚩",
+    "color": "#b91c1c",
+    "color2": "#7f1d1d",
+    "tags": [
+      "考研政治",
+      "马原",
+      "中国近现代史纲要",
+      "习思想",
+      "毛中特",
+      "思政",
+      "时事政治"
+    ],
+    "cover": "",
+    "description": "整套政治教材就这一本：马克思主义基本原理、中国近现代史纲要、毛泽东思想和中国特色社会主义理论体系概论、习近平新时代中国特色社会主义思想概论、思想道德与法治、形势与政策。",
+    "chapters": [
+      {
+        "title": "导论 · 马克思主义是什么",
+        "points": [
+          "六个“是”与三大组成部分",
+          "立场 · 观点 · 方法",
+          "1848《共产党宣言》与思想渊源",
+          "科学性 · 人民性 · 实践性 · 发展性"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 1
+      },
+      {
+        "title": "辩证唯物论 · 世界统一于物质",
+        "points": [
+          "哲学基本问题的两个侧面",
+          "物质 · 运动 · 静止 · 时空",
+          "意识的起源与能动作用",
+          "人工智能与人类意识"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 2
+      },
+      {
+        "title": "唯物辩证法 · 联系和发展",
+        "points": [
+          "普遍联系与变化发展",
+          "对立统一规律（矛盾）",
+          "量变质变规律",
+          "否定之否定规律",
+          "五对基本范畴"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 3
+      },
+      {
+        "title": "认识论 · 实践、真理与价值",
+        "points": [
+          "实践的三特征与基本结构",
+          "实践对认识的决定作用",
+          "两次飞跃与认识规律",
+          "真理与价值的统一"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 4
+      },
+      {
+        "title": "唯物史观 · 社会历史的规律",
+        "points": [
+          "社会存在与社会意识",
+          "两对社会基本矛盾",
+          "五大动力",
+          "人民群众与个人"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 5
+      },
+      {
+        "title": "政治经济学 · 商品与剩余价值",
+        "points": [
+          "商品二因素与劳动二重性",
+          "价值规律与货币五职能",
+          "劳动力成为商品",
+          "剩余价值的生产与资本积累",
+          "资本循环、周转与社会再生产"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 6
+      },
+      {
+        "title": "资本主义的发展及其趋势",
+        "points": [
+          "上层建筑：国家、民主与意识形态",
+          "从自由竞争到垄断",
+          "金融资本与垄断价格",
+          "经济全球化",
+          "二战后新变化与当代特征"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 7
+      },
+      {
+        "title": "结语 · 关于科学社会主义",
+        "points": [
+          "为什么导图只立了一个标题",
+          "资本积累的历史趋势"
+        ],
+        "file": "politics/marxism-principles.md",
+        "sec": 8
+      },
+      {
+        "title": "中国近现代史纲要",
+        "points": [
+          "历史脉络 · 大事年表"
+        ]
+      },
+      {
+        "title": "毛泽东思想和中国特色社会主义理论体系概论",
+        "points": [
+          "新民主主义革命理论",
+          "社会主义改造理论",
+          "中国特色社会主义理论体系"
+        ]
+      },
+      {
+        "title": "习近平新时代中国特色社会主义思想概论",
+        "points": [
+          "新时代坚持和发展中国特色社会主义"
+        ]
+      },
+      {
+        "title": "思想道德与法治",
+        "points": [
+          "理想信念",
+          "道德修养",
+          "法治素养"
+        ]
+      },
+      {
+        "title": "形势与政策 · 时事政治",
+        "points": [
+          "时政热点 · 年度大事"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "english",
+    "code": "13000",
+    "title": "英语（专升本）",
+    "emoji": "🔤",
+    "color": "#0f766e",
+    "color2": "#0a4f4a",
+    "tags": [
+      "英语"
+    ],
+    "cover": "",
+    "description": "词汇、语法与真题训练记录，正在搭建中。",
+    "chapters": []
+  },
+  {
+    "id": "ds",
+    "code": "13003",
+    "title": "数据结构",
+    "emoji": "🧩",
+    "color": "#4f46e5",
+    "color2": "#312e9e",
+    "tags": [
+      "数据结构（ds）",
+      "计算机408"
+    ],
+    "cover": "",
+    "description": "自考 13003 与考研 408 共用课程（课程代码一致）。以手写实现为主的代码笔记，边学边写。",
+    "chapters": [
+      {
+        "title": "线性表",
+        "points": [
+          "顺序表：顺序存储 · 按位插入/删除",
+          "单链表：带头结点 · 头尾/按位插入",
+          "双链表：单/双/循环单/循环双四种形态"
+        ],
+        "files": [
+          {
+            "file": "ds/ds-ccc-seqlist.md",
+            "label": "顺序表（CCC）"
+          },
+          {
+            "file": "ds/ds-danlianbiao.md",
+            "label": "单链表（danlianbiao）"
+          },
+          {
+            "file": "ds/ds-lianbiao-students.md",
+            "label": "双链表 · 四种形态（lianbiao）"
+          }
+        ]
+      },
+      {
+        "title": "栈",
+        "points": [
+          "顺序栈（定长数组）",
+          "链式栈（单链表头插 · 无容量上限）"
+        ],
+        "file": "ds/ds-stack.md"
+      },
+      {
+        "title": "队列",
+        "points": [
+          "循环队列（定长数组 · 牺牲一格判满）",
+          "带头结点链式队列（尾指针维护）"
+        ],
+        "file": "ds/ds-queue.md"
+      },
+      {
+        "title": "字符串查找及数组矩阵压缩",
+        "points": [
+          "多维数组（C 起步版）",
+          "多维数组（C 版 StringMatch）",
+          "多维数组（C++ OOP 版）",
+          "矩阵压缩：对称/三角已实现 · 稀疏待写"
+        ],
+        "files": [
+          {
+            "file": "ds/ds--Array.md",
+            "label": "多维数组 C 起步"
+          },
+          {
+            "file": "ds/ds-stringmatch-array.md",
+            "label": "多维数组 C 版"
+          },
+          {
+            "file": "ds/Ds _mdArraytoCpp.md",
+            "label": "多维数组 C++ 版"
+          },
+          {
+            "file": "ds/ds-stringmatch-cpp-fixes.md",
+            "label": "矩阵压缩（对称 ✅）"
+          },
+          {
+            "file": "ds/ds-stringmatch-tri-matrix.md",
+            "label": "矩阵压缩（三角 ✅ · 稀疏 ⬜）"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "math-calculus",
+    "code": "数学（一）",
+    "title": "高等数学",
+    "emoji": "∫",
+    "color": "#2563eb",
+    "color2": "#173a8a",
+    "tags": [
+      "数学"
+    ],
+    "cover": "",
+    "description": "数学（一）· 高等数学：极限、导数、积分与级数，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "math-linalg",
+    "code": "数学（一）",
+    "title": "线性代数",
+    "emoji": "🧮",
+    "color": "#0ea5e9",
+    "color2": "#0b6b98",
+    "tags": [
+      "数学"
+    ],
+    "cover": "",
+    "description": "数学（一）· 线性代数：行列式、矩阵与向量空间，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "math-prob",
+    "code": "数学（一）",
+    "title": "概率论与数理统计",
+    "emoji": "🎲",
+    "color": "#0891b2",
+    "color2": "#0a5c73",
+    "tags": [
+      "数学"
+    ],
+    "cover": "",
+    "description": "数学（一）· 概率论与数理统计：随机变量、分布与统计推断，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "eng1-vocab",
+    "code": "英语（一）",
+    "title": "英语（一）· 单词",
+    "emoji": "📇",
+    "color": "#0d9488",
+    "color2": "#0a635b",
+    "tags": [
+      "英语（一）"
+    ],
+    "cover": "",
+    "description": "英语（一）词汇：按 List / 主题分组背词，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "eng1-reading",
+    "code": "英语（一）",
+    "title": "英语（一）· 阅读",
+    "emoji": "📖",
+    "color": "#14b8a6",
+    "color2": "#0f766e",
+    "tags": [
+      "英语（一）"
+    ],
+    "cover": "",
+    "description": "英语（一）阅读：真题长文与精读笔记，整理中。",
+    "chapters": []
+  },
+  {
+    "id": "eng1-sentences",
+    "code": "英语（一）",
+    "title": "英语（一）· 长难句",
+    "emoji": "🧬",
+    "color": "#2dd4bf",
+    "color2": "#0f766e",
+    "tags": [
+      "英语（一）"
+    ],
+    "cover": "",
+    "description": "英语（一）长难句：从句拆分与翻译练习，整理中。",
+    "chapters": []
+  },
+  {
+    "id": "eng1-writing",
+    "code": "英语（一）",
+    "title": "英语（一）· 作文",
+    "emoji": "✍️",
+    "color": "#0f766e",
+    "color2": "#0a4f4a",
+    "tags": [
+      "英语（一）"
+    ],
+    "cover": "",
+    "description": "英语（一）作文：模板与范文背诵，整理中。",
+    "chapters": []
+  },
+  {
+    "id": "cs408-co",
+    "code": "408",
+    "title": "计算机组成原理",
+    "emoji": "🖥️",
+    "color": "#6d28d9",
+    "color2": "#4520a0",
+    "tags": [
+      "计算机408"
+    ],
+    "cover": "",
+    "description": "408 · 计算机组成原理：运算器、存储系统与指令流水线，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "cs408-os",
+    "code": "408",
+    "title": "操作系统",
+    "emoji": "🐧",
+    "color": "#7c3aed",
+    "color2": "#4c1d95",
+    "tags": [
+      "计算机408"
+    ],
+    "cover": "",
+    "description": "408 · 操作系统：进程管理、内存、文件与 IO，笔记整理中。",
+    "chapters": []
+  },
+  {
+    "id": "cs408-net",
+    "code": "408",
+    "title": "计算机网络",
+    "emoji": "🌐",
+    "color": "#9333ea",
+    "color2": "#5b21b6",
+    "tags": [
+      "计算机408"
+    ],
+    "cover": "",
+    "description": "408 · 计算机网络：分层体系与各层协议，笔记整理中。",
+    "chapters": []
+  }
+]

@@ -14,6 +14,7 @@
 - 书架、文章页 `/post#p=...`、posts 按科目分子目录（`posts/ds|politics|meta/`）。
 - Worker 层 4 个 secret 已配好：`ADMIN_USER / ADMIN_PASS / GH_TOKEN / CF_API_TOKEN`（在 CF 后台 Worker → Settings → Variables and Secrets / 或 wrangler 层，已收口到 Worker 层）。
 - 封面改成了**清单制**：页面只读 `assets/covers/manifest.json` 一次，不再逐扩展名探测（消除大量 404 请求）。
+- 书架章节配置已拆到 **`assets/courses.json`**（纯 JSON）：加书 / 加章节 / 把笔记挂进某章 `files`，只改这个文件，不要动 `assets/main.js`（它启动时 `getCourses()` 拉取后渲染）。
 
 ## 常用命令（在 D:\zikao\blog）
 ```cmd
