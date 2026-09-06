@@ -45,6 +45,6 @@ node --check worker.js
 - 文章/封面改动都要 `git push` 后构建完才上线；封面清单要 `node tools/update-covers.mjs` 重建后一起 push。
 
 ## 待办 / 开放项
-- 三角矩阵、稀疏矩阵压缩（StringMatch C++，见 `posts/ds/ds-stringmatch-cpp-fixes.md` 待办）。
+- 稀疏矩阵（系数矩阵）压缩：三元组顺序表 + 转置（StringMatch C++；对称/三角矩阵已完成，见 `posts/ds/ds-stringmatch-cpp-fixes.md` 与 `posts/ds/ds-stringmatch-tri-matrix.md`）。
 - 若做考研资料分享：用 R2（私有桶+签名 URL），别公开挂版权 PDF。
 - robots.txt 目前 CF 在托管生成覆盖；若想用自己的，需在 CF 关掉“内容信号/托管 robots”或确认部署下发后再看。
