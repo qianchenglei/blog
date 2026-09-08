@@ -215,7 +215,8 @@
           "多维数组（C 起步版）",
           "多维数组（C 版 StringMatch）",
           "多维数组（C++ OOP 版）",
-          "矩阵压缩：对称/三角已实现 · 稀疏待写"
+          "矩阵压缩：对称/三角已实现 · 稀疏待写",
+          "字符串匹配：KMP（C 版）"
         ],
         "files": [
           {
@@ -237,6 +238,10 @@
           {
             "file": "ds/ds-stringmatch-tri-matrix.md",
             "label": "矩阵压缩（三角 ✅ · 稀疏 ⬜）"
+          },
+          {
+            "file": "ds/ds-stringmatch-kmp.md",
+            "label": "字符串匹配 KMP ✅"
           }
         ]
       }
