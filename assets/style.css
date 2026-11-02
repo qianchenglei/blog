@@ -580,6 +580,16 @@ main {
 .book:nth-child(4n)   { height: 184px; }
 .book:nth-child(5n+1) { height: 170px; }
 
+/* 有真实封面时：图片铺满，去掉内边距和文字层 */
+.book.has-cover { padding: 0; }
+.book-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
 .book .book-emoji {
   font-size: 26px; line-height: 1;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, .5));

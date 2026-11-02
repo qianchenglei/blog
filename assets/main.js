@@ -783,14 +783,21 @@ function bookHTML(c, posts) {
   const notes = notesOfCourse(c, posts);
   const meta = ((c.chapters && c.chapters.length) ? c.chapters.length + " 章" : "整理中")
     + " · " + notes + " 篇";
-  return `<a class="book" href="#/course/${c.id}"
+
+  // 有真封面的书只显示封面图（书名靠 title/alt 承载），没图的退回渐变+文字
+  const inner = c.cover
+    ? `<img class="book-img" src="assets/covers/${c.cover}"
+            alt="${escapeHtml(c.title)}" loading="lazy" decoding="async">`
+    : `<span class="book-emoji">${c.emoji || "📘"}</span>
+       <span class="book-body">
+         <span class="book-title">${TITLE_BREAK[c.title] || escapeHtml(c.title)}</span>
+         <span class="book-meta">${escapeHtml(meta)}</span>
+       </span>`;
+
+  return `<a class="book${c.cover ? " has-cover" : ""}" href="#/course/${c.id}"
       style="--c1:${c.color};--c2:${c.color2};--glow:${c.color}88"
       title="${escapeHtml(c.title)}">
-    <span class="book-emoji">${c.emoji || "📘"}</span>
-    <span class="book-body">
-      <span class="book-title">${TITLE_BREAK[c.title] || escapeHtml(c.title)}</span>
-      <span class="book-meta">${escapeHtml(meta)}</span>
-    </span>
+    ${inner}
   </a>`;
 }
 
