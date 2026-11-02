@@ -742,11 +742,11 @@ if (page === "index") {
 /* 书架分层：先按 id 精确摆放，未知课程兜底进最后一层 */
 const SHELF_LAYERS = [
   { title: "数学与逻辑", en: "MATHEMATICS & LOGIC",
-    ids: ["math-calculus", "math-linalg", "math-prob"] },
+    ids: ["math-calculus", "math-calc-notes", "math-linalg", "math-prob"] },
   { title: "英语", en: "ENGLISH",
     ids: ["english", "eng1-vocab", "eng1-reading", "eng1-sentences", "eng1-writing"] },
   { title: "专业课与政治", en: "CS 408 & POLITICS",
-    ids: ["ds", "cs408-co", "cs408-os", "cs408-net", "politics"] },
+    ids: ["ds", "cs408-co", "cs408-os", "cs408-net", "politics", "cpp-primer"] },
 ];
 
 /* 长书名的换行位置，避免出现「计算机网 / 络」这种断法 */
