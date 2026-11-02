@@ -8,10 +8,18 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="post">
+
+  <!-- 背景层：与首页保持同一片极光，切页不跳色 -->
+  <div class="sky" aria-hidden="true"></div>
+  <div class="cursor-glow" id="glow" aria-hidden="true"></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="progress" id="prog" aria-hidden="true"></div>
+
   <nav class="topnav">
-    <div class="wrap-wide nav-in">
+    <div class="nav-in">
       <a class="brand" href="index.html"><span class="brand-mark">📚</span><span id="site-title">我命由我不由天</span></a>
       <div class="nav-right">
+        <a class="nav-link" href="index.html">主页</a>
         <a class="nav-link" href="index.html#/shelf">书架</a>
         <a class="nav-link" href="index.html#/posts">全部文章</a>
         <button id="theme-toggle" class="theme-toggle" title="切换深浅色" aria-label="切换深浅色">🌓</button>
@@ -19,19 +27,24 @@
     </div>
   </nav>
 
-  <main class="wrap">
-    <a class="back-link" id="back-link" href="index.html">← 返回主页</a>
-    <article class="post-body">
-      <header class="post-header">
-        <h1 id="post-title">加载中…</h1>
-        <div class="post-meta" id="post-meta"></div>
-      </header>
-      <div id="post-content"></div>
-    </article>
+  <main>
+    <div class="wrap">
+      <a class="back-link" id="back-link" href="index.html">← 返回主页</a>
+      <article class="post-body">
+        <header class="post-header">
+          <h1 id="post-title">加载中…</h1>
+          <div class="post-meta" id="post-meta"></div>
+        </header>
+        <div id="post-content"></div>
+      </article>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <div class="wrap-wide" id="footer-text">© 2026 · 用 Markdown 记录成长</div>
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:16px;flex-wrap:wrap">
+      <span id="footer-text">© 2026 · 用 Markdown 记录成长</span>
+      <span class="sig">拾级而上 / 我命由我不由天</span>
+    </div>
   </footer>
 
   <script src="assets/main.js"></script>

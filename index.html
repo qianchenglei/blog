@@ -9,10 +9,22 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="index">
+
+  <!-- 背景层：极光 + 星点 + 光标光斑 + 转场闪光 + 滚动进度 -->
+  <div class="sky" aria-hidden="true"></div>
+  <div class="cursor-glow" id="glow" aria-hidden="true"></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="progress" id="prog" aria-hidden="true"></div>
+
   <nav class="topnav" id="topnav">
-    <div class="wrap-wide nav-in">
+    <div class="nav-in">
       <a class="brand" href="#/"><span class="brand-mark">📚</span><span id="site-title">…</span></a>
       <div class="nav-right">
+        <div class="search-box">
+          <span aria-hidden="true">🔍</span>
+          <input id="search-input" type="search" placeholder="搜索笔记、标签…" autocomplete="off" aria-label="搜索笔记">
+          <kbd>⌘K</kbd>
+        </div>
         <a class="nav-link" data-nav="home" href="#/">主页</a>
         <a class="nav-link" data-nav="shelf" href="#/shelf">书架</a>
         <a class="nav-link" data-nav="posts" href="#/posts">全部文章</a>
@@ -24,7 +36,10 @@
   <main id="view" aria-live="polite"></main>
 
   <footer class="site-footer">
-    <div class="wrap-wide" id="footer-text">© 2026 · 用 Markdown 记录成长</div>
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:16px;flex-wrap:wrap">
+      <span id="footer-text">© 2026 · 用 Markdown 记录成长</span>
+      <span class="sig">拾级而上 / 我命由我不由天</span>
+    </div>
   </footer>
 
   <script src="assets/main.js"></script>

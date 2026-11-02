@@ -13,6 +13,6 @@
 
 1. 文章都是 `posts/` 目录下的 Markdown 文件
 2. 写完新文章后在 `posts.json` 里加一条记录（标题、日期、标签），首页就会自动出现
-3. 具体语法看 [写作指南](post.html#p=markdown-guide.md)
+3. 具体语法看 [写作指南](post#p=markdown-guide.md)
 
 > 路虽远，行则将至；事虽难，做则必成。

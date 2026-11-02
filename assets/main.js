@@ -396,7 +396,7 @@ function chapterFiles(ch) {
 }
 
 /* ---------- 视图一：主页（橱窗） ---------- */
-function renderHome(view, posts) {
+function renderHomeLegacy(view, posts) {
   const tags = [...new Set(posts.flatMap(p => p.tags || []))];
   const [line1, line2 = ""] = SITE.heroTitle.split("，");
   const books = COURSES.map((c, i) => {
@@ -599,11 +599,19 @@ async function renderRoute() {
 
   setActiveNav(hash);
 
+  // 离场：有旧内容时先淡出，同时触发一次极光闪白（与入场重叠）
+  const flashEl = document.getElementById("flash");
+  if (view.firstElementChild) {
+    view.classList.add("leaving");
+    if (flashEl) { flashEl.classList.remove("go"); void flashEl.offsetWidth; flashEl.classList.add("go"); }
+    await new Promise(r => setTimeout(r, 170));
+  }
+
   if (route.name === "course") {
     const c = COURSES.find(x => x.id === route.id);
     if (!c) {
       view.innerHTML = `<div class="wrap section"><div class="notice">书架上还没有这本教材。<a href="#/">← 返回主页</a></div></div>`;
-      document.title = SITE.title; currentKey = ""; return;
+      document.title = SITE.title; currentKey = ""; view.classList.remove("leaving"); return;
     }
     view.innerHTML = "";
     renderCourse(view, c, posts);
@@ -616,8 +624,10 @@ async function renderRoute() {
     document.title = SITE.title;
   }
 
-  view.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }],
-    { duration: 260, easing: "ease-out" });
+  // 入场：先置隐藏态，双 rAF 后再移除，否则浏览器合并帧会没有动画
+  view.classList.remove("leaving");
+  view.classList.add("entering");
+  requestAnimationFrame(() => requestAnimationFrame(() => view.classList.remove("entering")));
 
   if (hash === "#/shelf" && route.name === "home") {
     const s = document.getElementById("shelf");
@@ -723,3 +733,202 @@ if (page === "index") {
 } else if (page === "post") {
   initPost();
 }
+
+/* =====================================================
+ * V2 首页（深空极光版）
+ * 原 renderHome 已改名 renderHomeLegacy 保留作参考
+ * ===================================================== */
+
+/* 书架分层：先按 id 精确摆放，未知课程兜底进最后一层 */
+const SHELF_LAYERS = [
+  { title: "数学与逻辑", en: "MATHEMATICS & LOGIC",
+    ids: ["math-calculus", "math-linalg", "math-prob"] },
+  { title: "英语", en: "ENGLISH",
+    ids: ["english", "eng1-vocab", "eng1-reading", "eng1-sentences", "eng1-writing"] },
+  { title: "专业课与政治", en: "CS 408 & POLITICS",
+    ids: ["ds", "cs408-co", "cs408-os", "cs408-net", "politics"] },
+];
+
+/* 长书名的换行位置，避免出现「计算机网 / 络」这种断法 */
+const TITLE_BREAK = {
+  "概率论与数理统计": "概率论<br>与数理统计",
+  "计算机组成原理": "计算机组成<br>原理",
+  "英语（专升本）": "英语<br>（专升本）",
+};
+
+function shelfRows() {
+  const used = new Set();
+  const rows = SHELF_LAYERS.map(L => {
+    const list = L.ids.map(id => COURSES.find(c => c.id === id)).filter(Boolean);
+    list.forEach(c => used.add(c.id));
+    return { title: L.title, en: L.en, books: list };
+  });
+  const rest = COURSES.filter(c => !used.has(c.id));
+  if (rest.length && rows.length) rows[rows.length - 1].books.push(...rest);
+  return rows.filter(r => r.books.length);
+}
+
+/* 每本书挂了几篇笔记：章节命中 + 标签命中，去重 */
+function notesOfCourse(c, posts) {
+  const postSet = new Set(posts.map(p => p.file));
+  const linked = new Set(
+    (c.chapters || []).flatMap(ch => chapterFiles(ch))
+      .filter(f => f.file && postSet.has(f.file)).map(f => f.file)
+  );
+  const tagPosts = posts.filter(p => (p.tags || []).some(t => (c.tags || []).includes(t)));
+  return new Set([...tagPosts.map(p => p.file), ...linked]).size;
+}
+
+function bookHTML(c, posts) {
+  const notes = notesOfCourse(c, posts);
+  const meta = ((c.chapters && c.chapters.length) ? c.chapters.length + " 章" : "整理中")
+    + " · " + notes + " 篇";
+  return `<a class="book" href="#/course/${c.id}"
+      style="--c1:${c.color};--c2:${c.color2};--glow:${c.color}88"
+      title="${escapeHtml(c.title)}">
+    <span class="book-emoji">${c.emoji || "📘"}</span>
+    <span class="book-body">
+      <span class="book-title">${TITLE_BREAK[c.title] || escapeHtml(c.title)}</span>
+      <span class="book-meta">${escapeHtml(meta)}</span>
+    </span>
+  </a>`;
+}
+
+function shelfHTML(posts) {
+  return shelfRows().map((row, i) => `
+    <div class="row reveal" style="transition-delay:${i * 90}ms">
+      <div class="row-head">
+        <span class="plate"><b></b>${row.title}</span>
+        <em>${row.en}</em>
+        <span class="num">${row.books.length} 本</span>
+      </div>
+      <div class="books">${row.books.map(c => bookHTML(c, posts)).join("")}</div>
+      <div class="plank"></div>
+    </div>`).join("");
+}
+
+/* 倒计时：2028 考研初试（2027 年 12 月倒数第二个周六估） */
+const EXAM_DATE = "2027-12-25";
+function daysLeft() {
+  const exam = new Date(EXAM_DATE + "T00:00:00");
+  return Math.max(0, Math.ceil((exam - new Date()) / 86400000));
+}
+
+/* 本月新增笔记数 */
+function monthCount(posts) {
+  const d = new Date();
+  const prefix = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  return posts.filter(p => String(p.date).startsWith(prefix)).length;
+}
+
+function timelineHTML(posts) {
+  return posts.slice(0, 5).map((p, i) => `
+    <a class="item reveal" href="post#p=${encFile(p.file)}" style="transition-delay:${i * 70}ms">
+      <span class="date">${p.date}</span>
+      <span class="rail"><i class="dot"></i></span>
+      <span class="body">
+        <span class="meta"><span class="tag">${escapeHtml((p.tags && p.tags[0]) || "笔记")}</span><span>课程笔记</span></span>
+        <div class="title">${escapeHtml(p.title)}</div>
+        <div class="sum">${escapeHtml(p.summary || "")}</div>
+      </span>
+    </a>`).join("");
+}
+
+function renderHome(view, posts) {
+  const [line1, line2 = ""] = SITE.heroTitle.split("，");
+  const n = monthCount(posts);
+  const foot = n > 0 ? `本月新添 ${n} 篇笔记，细水长流` : "本月还没动笔，先把旧账翻完";
+  const rows = shelfRows();
+
+  view.innerHTML = `
+  <div class="view">
+    <section class="wrap hero">
+      <div class="reveal in">
+        <div class="kicker"><i></i>自考 × 考研 · 备考进行时</div>
+        <h1 class="hero-title">
+          <span>${escapeHtml(line1)}，</span>
+          <span class="grad">${escapeHtml(line2)}</span>
+        </h1>
+        <p class="hero-desc">${escapeHtml(SITE.heroText)}</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#/shelf">📚 走进书架</a>
+          <a class="btn btn-ghost" href="#/posts">✍️ 全部文章</a>
+        </div>
+      </div>
+      <aside class="panel reveal" style="transition-delay:120ms">
+        <div class="panel-head"><h3>学习进度</h3><span class="chip">2028 考研</span></div>
+        <div class="count"><b>${daysLeft()}</b><span>天</span></div>
+        <div class="count-label">距 2028 考研初试 · 预计 12 月下旬</div>
+        <hr>
+        <div class="stats">
+          <div><b>${COURSES.length}</b><span>门课程</span></div>
+          <div><b>${posts.length}</b><span>篇笔记</span></div>
+          <div><b>${rows.length}</b><span>个分类</span></div>
+        </div>
+        <div class="panel-foot"><i></i>${foot}</div>
+      </aside>
+    </section>
+
+    <section class="wrap section" id="shelf">
+      <header class="sec-head reveal">
+        <div>
+          <div class="eyebrow">The Bookshelf</div>
+          <h2>书架</h2>
+          <p>按科目分层陈列 · 悬停书本可预览，点开进入它的知识结构</p>
+        </div>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--dim)">${COURSES.length} 本教材</span>
+      </header>
+      <div class="shelf-case">${shelfHTML(posts)}</div>
+    </section>
+
+    <section class="wrap section">
+      <header class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Recently Updated</div>
+          <h2>最近更新</h2>
+        </div>
+        <a class="more-link" href="#/posts">查看全部 →</a>
+      </header>
+      <div class="feed">${timelineHTML(posts)}</div>
+    </section>
+  </div>`;
+}
+
+/* 背景层：光标光斑 + 滚动进度（post.html 没有这些节点，判空跳过） */
+(function initBackdrop() {
+  const glow = document.getElementById("glow");
+  if (glow) {
+    window.addEventListener("mousemove", e => {
+      glow.style.opacity = 1;
+      glow.style.left = e.clientX + "px";
+      glow.style.top = e.clientY + "px";
+    }, { passive: true });
+  }
+  const prog = document.getElementById("prog");
+  if (prog) {
+    window.addEventListener("scroll", () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      prog.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+    }, { passive: true });
+  }
+})();
+
+/* 搜索：P0 只做当前页面内的简单过滤（全部文章页有效） */
+(function initSearch() {
+  const input = document.getElementById("search-input");
+  if (!input) return;
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    document.querySelectorAll(".post-card").forEach(card => {
+      card.style.display = (!q || card.textContent.toLowerCase().includes(q)) ? "" : "none";
+    });
+  });
+  document.addEventListener("keydown", e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      input.focus();
+    }
+    if (e.key === "Escape" && document.activeElement === input) input.blur();
+  });
+})();
