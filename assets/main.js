@@ -786,7 +786,7 @@ function bookHTML(c, posts) {
 
   // 有真封面的书只显示封面图（书名靠 title/alt 承载），没图的退回渐变+文字
   const inner = c.cover
-    ? `<img class="book-img" src="assets/covers/${c.cover}"
+    ? `<img class="book-img" src="${c.cover}"
             alt="${escapeHtml(c.title)}" loading="lazy" decoding="async">`
     : `<span class="book-emoji">${c.emoji || "📘"}</span>
        <span class="book-body">

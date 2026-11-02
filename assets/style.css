@@ -696,8 +696,14 @@ main {
   border-radius: 3px 6px 6px 3px;
   overflow: hidden;
   background: linear-gradient(160deg, var(--c1, #2FD0BD), var(--c2, #0A4F4A));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   box-shadow: 0 12px 26px rgba(0, 0, 0, .35);
 }
+/* 背景图加载成功后，隐掉占位文字，露出真封面 */
+.book-cover.has-img .cover-ph,
+.book-cover.has-img .cover-shade { opacity: 0; }
 .book-cover .cover-ph {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; justify-content: space-between;
